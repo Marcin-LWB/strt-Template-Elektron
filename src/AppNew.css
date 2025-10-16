@@ -15,8 +15,8 @@
 }
 
 .app-header {
-  background: #2d2d2d;
-  color: #f0f0f0;
+  background: #787676;
+  color: #1a1a1a;
   padding: 16px 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -33,13 +33,14 @@
   font-weight: 800;
   font-family: 'Sora', sans-serif;
   letter-spacing: -0.5px;
+  color: #2a2a2a;
 }
 
 .subtitle {
   margin: 5px 0 0 0;
   font-size: 0.95rem;
   opacity: 0.85;
-  color: #b0b0b0;
+  color: #2d2d2d;
 }
 
 .header-actions {
@@ -53,9 +54,9 @@
 }
 
 .config-button {
-  background: #3d3d3d;
-  color: #f0f0f0;
-  border: 1px solid #505050;
+  background: #454545;
+  color: #2a2a2a;
+  border: 1px solid #555555;
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
@@ -65,8 +66,8 @@
 }
 
 .config-button:hover {
-  background: #4d4d4d;
-  border-color: #606060;
+  background: #505050;
+  border-color: #666666;
 }
 
 .config-dropdown {

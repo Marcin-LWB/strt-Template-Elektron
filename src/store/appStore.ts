@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ExcelFile, ExcelData, ExcelConfig } from '../types/excel.types';
-import { DEFAULT_CUSTOM_COLUMNS } from '../types/excel.types';
+import type { ExcelFile, ExcelData } from '../types/excel.types';
 
 /**
  * Główny store aplikacji - Zustand
@@ -33,8 +32,6 @@ interface AppState {
   // Actions
   reset: () => void;
 }
-
-// Usunięto defaultConfig - uproszczony szablon
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -70,20 +67,9 @@ export const useAppStore = create<AppState>()(
       setLoadedData: (data) => set({ loadedData: data }),
       updateLoadedData: (data) => set({ loadedData: data }),
       
-      // Config actions
-      updateConfig: (config) => set((state) => ({
-        config: { ...state.config, ...config },
-      })),
-      
       // UI actions
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
-
-      // PDF directory actions
-      setPdfSourceFolder: (path) => set({ pdfSourceFolder: path }),
-      setPdfSourceHandle: (handle) => set({ pdfSourceHandle: handle }),
-      setPdfDestinationFolder: (path) => set({ pdfDestinationFolder: path }),
-      setPdfDestinationHandle: (handle) => set({ pdfDestinationHandle: handle }),
       
       // Reset
       reset: () => set({
@@ -92,17 +78,12 @@ export const useAppStore = create<AppState>()(
         loadedData: null,
         loading: false,
         error: null,
-        pdfSourceFolder: null,
-        pdfSourceHandle: null,
-        pdfDestinationFolder: null,
-        pdfDestinationHandle: null,
       }),
     }),
     {
       name: 'cpk-export-storage',
       partialize: (state) => ({
         workspaceDir: state.workspaceDir,
-        config: state.config,
       }),
     }
   )

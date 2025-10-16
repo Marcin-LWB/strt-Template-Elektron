@@ -14,6 +14,9 @@
     "electron": "electron .",
     "electron:dev": "cross-env NODE_ENV=development electron .",
     "build-electron": "npm run build && electron-builder",
+    "dist": "npm run build-electron",
+    "dist:dir": "npm run build && electron-builder --dir",
+    "dist:portable": "npm run build && electron-builder --win portable",
     "start": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && npm run electron:dev\""
   },
   "dependencies": {
@@ -45,18 +48,38 @@
     "wait-on": "^8.0.5"
   },
   "build": {
-    "appId": "com.cpk.export.weryfikacja",
-    "productName": "CPK Export Weryfikacja",
+    "appId": "com.starttemplate.app",
+    "productName": "Start Template",
     "directories": {
-      "output": "dist-electron"
+      "output": "dist-electron",
+      "buildResources": "assets"
     },
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "node_modules/**/*"
     ],
     "win": {
-      "target": "nsis",
-      "icon": "public/vite.svg"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Start Template"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
     }
   }
 }

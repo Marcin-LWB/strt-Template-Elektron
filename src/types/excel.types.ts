@@ -6,6 +6,7 @@ import { z } from 'zod';
 export const ExcelRowSchema = z.object({
   rowIndex: z.number(),
   rowColor: z.string().optional(), // Kolor z drugiej kolumny
+  sourceFile: z.string().optional(), // Nazwa pliku źródłowego
   columns: z.record(z.string(), z.any()), // Dynamiczne kolumny
 });
 

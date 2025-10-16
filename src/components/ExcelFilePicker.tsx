@@ -1,234 +1,214 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
+import type { ExcelData } from '../types/excel.types';
 import './ExcelFilePicker.css';
 
-/**
- * Komponent do wyboru i zarządzania plikami Excel
- * Uproszczony szablon - podstawowy wybór plików
- */
 interface ExcelFilePickerProps {
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export default function ExcelFilePicker({ onClose }: ExcelFilePickerProps) {
-  const {
-    workspaceDir,
-    setWorkspaceDir,
-    excelFiles,
-    setExcelFiles,
-    toggleFileSelection,
-    selectAllFiles,
-    deselectAllFiles,
-    loading,
-    setLoading,
-    error,
-    setError,
-  } = useAppStore();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { setLoadedData, setLoading: setStoreLoading } = useAppStore();
 
-  const [recursive, setRecursive] = useState(false);
-  const isElectron = typeof window !== 'undefined' && window.electronAPI;
-
-  // Wybierz folder - hybrydowy tryb
-  const handleSelectFolder = async () => {
-    if (isElectron) {
-      // Electron mode
-      try {
-        const dir = await window.electronAPI.selectXlsxDirectory();
-        if (dir) {
-          setWorkspaceDir(dir);
-          setError(null);
-          // Automatycznie skanuj po wyborze
-          await handleScanFiles(dir);
-        }
-      } catch (err: any) {
-        setError(`Błąd wyboru folderu: ${err.message}`);
-        window.electronAPI?.logError('Error selecting folder', err);
-      }
-    } else if (hasFileSystemAccess) {
-      // Browser mode - File System Access API
-      try {
-        const dirHandle = await (window as any).showDirectoryPicker();
-        setDirHandle(dirHandle);
-        setWorkspaceDir(dirHandle.name);
-        setError(null);
-        await saveRootDirHandle(dirHandle);
-        await handleScanFilesBrowser(dirHandle);
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          setError(`Błąd wyboru folderu: ${err.message}`);
-          console.error('Error selecting folder in browser:', err);
-        }
-      }
-    } else {
-      setError('Twoja przeglądarka nie obsługuje File System Access API. Użyj Chrome/Edge lub uruchom aplikację w Electron.');
-    }
-  };
-
-  // Skanuj pliki - Electron mode
-  const handleScanFiles = async (dir = workspaceDir) => {
-    if (!dir || !isElectron) return;
-
-    setScanStatus('scanning');
-    setLoading(true);
-    setError(null);
-
+  const handleFileSelect = async () => {
     try {
-      const result = await window.electronAPI.scanXlsxFiles(dir, recursive);
-      
-      if (result.success) {
-        setExcelFiles(result.files);
-        window.electronAPI.logInfo(`Found ${result.files.length} Excel files`);
+      setLoading(true);
+      setError(null);
+
+      // Obsługa File System Access API (Chrome/Edge desktop)
+      if ('showOpenFilePicker' in window) {
+        try {
+          const fileHandles = await (window as any).showOpenFilePicker({
+            types: [
+              {
+                description: 'Pliki Excel',
+                accept: {
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                  'application/vnd.ms-excel': ['.xls'],
+                },
+              },
+            ],
+          });
+
+          if (fileHandles.length === 0) return;
+
+          const fileHandle = fileHandles[0];
+          const file = await fileHandle.getFile();
+          await loadExcelData(file);
+        } catch (err: any) {
+          if (err.name === 'NotAllowedError') {
+            // Fallback na HTML5 input
+            fileInputRef.current?.click();
+          } else if (err.name !== 'AbortError') {
+            throw err;
+          }
+        }
       } else {
-        setError(result.error || 'Błąd skanowania plików');
+        // Fallback dla przeglądarek bez File System Access API
+        fileInputRef.current?.click();
       }
+
+      setStoreLoading(false);
+      onClose();
     } catch (err: any) {
-      setError(`Błąd skanowania: ${err.message}`);
-      window.electronAPI?.logError('Error scanning files', err);
+      if (err.name !== 'AbortError') {
+        setError(err.message || 'Błąd podczas ładowania pliku');
+      }
+      setStoreLoading(false);
     } finally {
-      setScanStatus('idle');
       setLoading(false);
     }
   };
 
-  // Skanuj pliki - Browser mode
-  const handleScanFilesBrowser = async (dirHandle: FileSystemDirectoryHandle) => {
-    setScanStatus('scanning');
-    setLoading(true);
-    setError(null);
+  const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files || files.length === 0) return;
 
     try {
-      const files = await scanDirectoryForExcel(dirHandle, recursive);
-      // WAŻNE: Zachowaj dirHandle dla każdego pliku - potrzebne do ładowania
-      const filesWithHandle = files.map(f => ({ ...f, dirHandle }));
-      setExcelFiles(filesWithHandle);
-      console.log(`Found ${files.length} Excel files in browser`);
+      setLoading(true);
+      setError(null);
+      await loadExcelData(files[0]);
+      setStoreLoading(false);
+      onClose();
     } catch (err: any) {
-      setError(`Błąd skanowania: ${err.message}`);
-      console.error('Error scanning files in browser:', err);
+      setError(err.message || 'Błąd podczas ładowania pliku');
+      setStoreLoading(false);
     } finally {
-      setScanStatus('idle');
       setLoading(false);
     }
   };
 
-  // Statystyki
-  const selectedCount = excelFiles.filter(f => f.selected).length;
-  const totalCount = excelFiles.length;
+  const loadExcelData = async (file: File) => {
+    // Dynamiczny import ExcelJS
+    const { Workbook } = await import('exceljs');
+    
+    // Odczytanie pliku
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = new Workbook();
+    await workbook.xlsx.load(arrayBuffer);
+    
+    // Pobranie pierwszego arkusza
+    const worksheet = workbook.worksheets[0];
+    
+    if (!worksheet || worksheet.rowCount === 0) {
+      setError('Plik Excel jest pusty');
+      return;
+    }
+
+    // Wyodrębnienie nagłówków (pierwszy wiersz)
+    const headers: string[] = [];
+    worksheet.getRow(1).eachCell((cell) => {
+      headers.push(String(cell.value || ''));
+    });
+
+    // Konwersja wierszy
+    const rows = [];
+    for (let i = 2; i <= worksheet.rowCount; i++) {
+      const row = worksheet.getRow(i);
+      const columns: Record<string, any> = {};
+      
+      row.eachCell((cell, colNumber) => {
+        if (colNumber <= headers.length) {
+          columns[headers[colNumber - 1]] = cell.value || '';
+        }
+      });
+      
+      rows.push({
+        rowIndex: i - 2,
+        rowColor: undefined,
+        sourceFile: file.name, // Dodane pole sourceFile
+        columns,
+      });
+    }
+
+    // Przygotowanie obiektu ExcelData
+    const excelData: ExcelData = {
+      sourceFiles: [
+        {
+          fileName: file.name,
+          filePath: file.name,
+          folderPath: '.',
+          selected: true,
+          sheetName: worksheet.name,
+          headers,
+          rowCount: rows.length,
+          lastModified: file.lastModified,
+        },
+      ],
+      headers,
+      rows,
+      totalRows: rows.length,
+      columnsCount: headers.length,
+    };
+
+    // Aktualizacja store
+    setLoadedData(excelData);
+  };
 
   return (
     <div className="excel-file-picker">
-      <div className="picker-actions" style={{ marginBottom: '20px' }}>
-        <button 
-          onClick={handleSelectFolder} 
-          className="btn-primary"
-          disabled={loading}
-        >
-          📂 Wybierz folder
-        </button>
-        
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={recursive}
-            onChange={(e) => {
-              setRecursive(e.target.checked);
-              if (workspaceDir) handleScanFiles(workspaceDir);
-            }}
-            disabled={loading}
-          />
-          Skanuj podkatalogi
-        </label>
-        
-        <button 
-          onClick={() => {
-            if (isElectron) {
-              handleScanFiles();
-            } else if (dirHandle) {
-              handleScanFilesBrowser(dirHandle);
-            }
-          }} 
-          disabled={(!workspaceDir && !dirHandle) || loading}
-          className="btn-secondary"
-        >
-          {scanStatus === 'scanning' ? '⏳ Skanuję...' : '🔄 Odśwież'}
-        </button>
-        
-        {onClose && totalCount > 0 && (
-          <button 
-            onClick={onClose}
-            className="btn-primary"
-          >
-            ✓ Gotowe ({selectedCount} zaznaczonych)
-          </button>
-        )}
-      </div>
-
-      {workspaceDir && (
-        <div className="workspace-info">
-          <strong>Folder roboczy:</strong> <code>{workspaceDir}</code>
-        </div>
-      )}
-
+      <h3>📁 Wczytaj plik Excel</h3>
+      
+      {/* Hidden file input jako fallback */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={handleFileInputChange}
+        style={{ display: 'none' }}
+      />
+      
       {error && (
-        <div className="error-message">
-          ⚠️ {error}
+        <div style={{
+          padding: '12px',
+          backgroundColor: '#fee',
+          color: '#c00',
+          borderRadius: '4px',
+          marginBottom: '12px',
+          fontSize: '14px',
+        }}>
+          {error}
         </div>
       )}
 
-      <div className="files-summary">
-        <span className="badge">Wszystkich plików: {totalCount}</span>
-        <span className="badge badge-selected">Zaznaczonych: {selectedCount}</span>
-        
-        {totalCount > 0 && (
-          <div className="bulk-actions">
-            <button onClick={selectAllFiles} className="btn-link">
-              ☑️ Zaznacz wszystkie
-            </button>
-            <button onClick={deselectAllFiles} className="btn-link">
-              ☐ Odznacz wszystkie
-            </button>
-          </div>
-        )}
+      <div style={{ marginBottom: '20px' }}>
+        <p style={{ marginBottom: '12px', color: '#666' }}>
+          Kliknij poniżej aby wybrać plik Excel (.xlsx, .xls)
+        </p>
+        <button
+          onClick={handleFileSelect}
+          disabled={loading}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: loading ? '#ccc' : '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+          }}
+        >
+          {loading ? '⏳ Ładowanie...' : '📂 Wybierz plik Excel'}
+        </button>
       </div>
 
-      {totalCount === 0 && workspaceDir ? (
-        <div className="empty-state">
-          <p>🔍 Nie znaleziono plików Excel (.xlsx) w wybranym folderze.</p>
-          {!recursive && <p><em>Spróbuj włączyć skanowanie podkatalogów.</em></p>}
-        </div>
-      ) : (
-        <div className="file-list-container">
-          {excelFiles.map((file, index) => (
-            <div 
-              key={`${file.filePath}-${index}`} 
-              className={`file-item ${file.selected ? 'selected' : ''}`}
-            >
-              <label className="file-checkbox">
-                <input
-                  type="checkbox"
-                  checked={file.selected}
-                  onChange={() => toggleFileSelection(file.filePath)}
-                />
-                <div className="file-info">
-                  <div className="file-name">📄 {file.fileName}</div>
-                  <div className="file-path">{file.folderPath}</div>
-                  {file.lastModified && (
-                    <div className="file-meta">
-                      Zmodyfikowano: {new Date(file.lastModified).toLocaleString('pl-PL')}
-                    </div>
-                  )}
-                </div>
-              </label>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {!isElectron && hasFileSystemAccess && (
-        <div className="info-message">
-          ℹ️ Tryb przeglądarki - używam File System Access API
-        </div>
-      )}
+      <button
+        onClick={onClose}
+        style={{
+          padding: '8px 16px',
+          backgroundColor: '#f0f0f0',
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '14px',
+        }}
+      >
+        Zamknij
+      </button>
     </div>
   );
 }

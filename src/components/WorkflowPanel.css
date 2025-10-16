@@ -7,9 +7,9 @@
   overflow-x: hidden; /* Ukryj poziomy scroll */
 }
 
-/* Excel section - flexible width */
+/* Wszystkie sekcje - równa szerokość */
 .workflow-excel {
-  flex: 1 1 0%;
+  flex: 1 1 calc(25% - 12px); /* Cztery kolumny */
   min-width: 220px;
   display: flex;
   flex-direction: column;
@@ -17,7 +17,7 @@
 
 /* PDF Checker section - flexible width */
 .workflow-pdf-checker {
-  flex: 1 1 0%;
+  flex: 1 1 calc(25% - 12px);
   min-width: 220px;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
 
 /* PDF Copy section - flexible width */
 .workflow-pdf-copy {
-  flex: 1 1 0%;
+  flex: 1 1 calc(25% - 12px);
   min-width: 220px;
   display: flex;
   flex-direction: column;
@@ -33,7 +33,7 @@
 
 /* Final File Name Generator - flexible width */
 .workflow-full-width {
-  flex: 1 1 0%;
+  flex: 1 1 calc(25% - 12px);
   min-width: 220px;
   display: flex;
   flex-direction: column;
@@ -127,7 +127,8 @@
   .workflow-pdf-checker,
   .workflow-pdf-copy,
   .workflow-full-width {
-    min-width: 200px; /* Jeszcze mniejsza minimalna szerokość */
+    flex: 1 1 calc(50% - 5px); /* 2 kolumny */
+    min-width: 200px;
   }
 }
 
@@ -140,7 +141,7 @@
   .workflow-pdf-checker,
   .workflow-pdf-copy,
   .workflow-full-width {
-    flex: 1 1 calc(50% - 10px); /* 2 kolumny na tabletach */
+    flex: 1 1 calc(50% - 5px); /* 2 kolumny na tabletach */
     min-width: 200px;
   }
 }

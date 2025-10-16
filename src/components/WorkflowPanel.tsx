@@ -89,7 +89,7 @@ export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: Workfl
       </div>
 
       {/* Sekcja 2 - Szablon */}
-      <div className="workflow-section workflow-section-2">
+      <div className="workflow-section workflow-excel">
         <div className="section-header">
           <h3>� Sekcja 2</h3>
           <p className="section-description">
@@ -103,7 +103,7 @@ export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: Workfl
       </div>
 
       {/* Sekcja 3 - Szablon */}
-      <div className="workflow-section workflow-section-3">
+      <div className="workflow-section workflow-excel">
         <div className="section-header">
           <h3>⚙️ Sekcja 3</h3>
           <p className="section-description">
@@ -117,7 +117,7 @@ export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: Workfl
       </div>
 
       {/* Sekcja 4 - Szablon */}
-      <div className="workflow-section workflow-section-4">
+      <div className="workflow-section workflow-excel">
         <div className="section-header">
           <h3>� Sekcja 4</h3>
           <p className="section-description">
