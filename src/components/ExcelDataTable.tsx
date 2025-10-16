@@ -1,76 +1,45 @@
-import { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { DEFAULT_CUSTOM_COLUMNS } from '../types/excel.types';
-import FilterPanel from './FilterPanel';
 import './ExcelDataTable.css';
 
-/**
- * Komponent do wyświetlania danych z załadowanych plików Excel
- * Iteration 2: Tabela z filtrami tagów i wyszukiwaniem
- */
 export default function ExcelDataTable() {
-  const { loadedData, loading, error, config } = useAppStore();
-  const [filteredRows, setFilteredRows] = useState<Array<{ rowIndex: number; columns: Record<string, any>; rowColor?: string }>>([]);
+  const { loadedData, loading, error } = useAppStore();
 
-  const resolvedCustomColumns = (config.customColumns?.length ? config.customColumns : DEFAULT_CUSTOM_COLUMNS).map(column => ({ ...column }));
+  const handleExportToExcel = async () => {
+    if (!loadedData) return;
+    
+    try {
+      const ExcelJS = await import('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Eksport danych');
 
-  // Funkcja do resetowania filtrów
-  const handleResetFilters = () => {
-    setFilteredRows([]); // Czyścimy przefiltrowane wiersze, co przywróci wszystkie dane
-  };
-  const visibleCustomColumns = resolvedCustomColumns.filter(col => col.visible);
+      const headers = ['#', 'Plik źródłowy', ...(loadedData.headers || [])];
+      worksheet.addRow(headers);
 
-  // Funkcja do konwersji koloru ARGB na CSS
-  const getRowColor = (argb?: string) => {
-    if (!argb) return undefined;
-    // ARGB format: AARRGGBB
-    if (argb.length === 8) {
-      const r = parseInt(argb.substr(2, 2), 16);
-      const g = parseInt(argb.substr(4, 2), 16);
-      const b = parseInt(argb.substr(6, 2), 16);
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
+      loadedData.rows.forEach((row: any, index: number) => {
+        const rowData = [index + 1, row.sourceFile || 'N/A'];
+        loadedData.headers.forEach((header: string) => {
+          rowData.push(row.columns[header] || '');
+        });
+        worksheet.addRow(rowData);
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'eksport_danych.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Błąd eksportu:', error);
     }
-    return undefined;
   };
-
-  // Determine which columns to display based on mode
-  const displayColumns = config.displayMode === 'custom' && visibleCustomColumns.length > 0
-    ? visibleCustomColumns
-    : null;
-
-  // Get column width for a specific column
-  const getColumnWidth = (columnName: string): number => {
-    if (config.displayMode === 'custom') {
-      const colConfig = visibleCustomColumns.find(c => c.name === columnName);
-      return colConfig?.width || 150;
-    }
-    return config.columnWidth || 150;
-  };
-
-  // Filter headers based on display mode - TYLKO WYBRANE KOLUMNY
-  const allowedColumnNames = new Set(visibleCustomColumns.map(col => col.name));
-  const baseHeaders = displayColumns
-    ? displayColumns.map(col => col.name)
-    : (loadedData?.headers || []).filter(header => allowedColumnNames.size === 0 || allowedColumnNames.has(header));
-  const supplementalHeaders = displayColumns
-    ? []
-    : visibleCustomColumns
-        .map(col => col.name)
-        .filter(name => !baseHeaders.includes(name));
-  const visibleHeaders = [...baseHeaders, ...supplementalHeaders];
-
-  console.log('ExcelDataTable: Headers:', loadedData?.headers);
-  console.log('ExcelDataTable: Visible headers:', visibleHeaders);
-  console.log('ExcelDataTable: Has Final File Name:', visibleHeaders.includes('Final File Name'));
-
-  // Używamy przefiltrowanych wierszy lub wszystkich
-  const displayRows = filteredRows.length > 0 || loadedData ? filteredRows : [];
-  const actualRows = displayRows.length > 0 ? displayRows : (loadedData?.rows || []);
 
   return (
     <div className="excel-data-table">
       <div className="table-header">
-        <h2>📊 Dane z plików Excel</h2>
+        <h2>Dane z plików Excel</h2>
         
         <div className="table-actions">
           {loadedData && (
@@ -79,16 +48,14 @@ export default function ExcelDataTable() {
                 onClick={() => useAppStore.setState({ loadedData: null })}
                 className="btn-secondary"
               >
-                🗑️ Wyczyść dane
+                Wyczyść dane
               </button>
               
-              {/* Przycisk Reset filtrów - przeniesiony z FilterPanel */}
               <button 
-                onClick={handleResetFilters}
-                className="btn-secondary"
-                title="Wyczyść wszystkie filtry"
+                onClick={handleExportToExcel}
+                className="btn-primary"
               >
-                🔄 Reset wszystkich filtrów
+                Eksportuj do Excel
               </button>
             </>
           )}
@@ -97,100 +64,73 @@ export default function ExcelDataTable() {
 
       {error && (
         <div className="error-message">
-          ⚠️ {error}
+          {error}
         </div>
       )}
 
-      {!loadedData && !loading && (
+      {loading && (
+        <div className="loading-spinner">
+          Ładowanie danych...
+        </div>
+      )}
+
+      {!loading && !loadedData && (
         <div className="empty-state">
-          <p>📂 Użyj przycisku "Załaduj wybrane pliki" w sekcji "Pliki Excel" powyżej</p>
-          <p className="hint">
-            Najpierw wybierz folder z plikami Excel, zaznacz pliki checkboxami, a następnie kliknij przycisk ładowania.
+          <h3>Wybierz pliki Excel</h3>
+          <p>Użyj panelu wyboru plików, aby załadować dane z arkuszy Excel</p>
+        </div>
+      )}
+
+      {loadedData && (
+        <div className="table-info">
+          <p>Pliki źródłowe: {loadedData.sourceFiles?.length || 0} | 
+             Wiersze: {loadedData.totalRows} | 
+             Kolumny: {loadedData.headers?.length || 0}
           </p>
         </div>
       )}
 
       {loadedData && (
-        <>
-          {/* Panel filtrów - Iteration 2 */}
-          <FilterPanel 
-            rows={loadedData.rows} 
-            onFilterChange={setFilteredRows}
-            loadedData={loadedData}
-          />
-
-          {/* Ukryta belka z podsumowaniem - przeniesiona do FilterPanel */}
-
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th className="row-number" style={{ width: '60px', minWidth: '60px' }}>#</th>
-                  {config.displayMode === 'all' && (
-                    <th className="source-file" style={{ width: '100px', minWidth: '100px' }}>Plik źródłowy</th>
-                  )}
-                  {visibleHeaders.map((header, i) => (
-                    <th 
-                      key={i}
-                      style={{ 
-                        width: `${getColumnWidth(header)}px`,
-                        minWidth: '60px',
-                        maxWidth: '500px'
-                      }}
-                      title={`${header}`}
-                    >
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {actualRows.map((row, i) => (
-                  <tr 
-                    key={i}
-                    style={{ backgroundColor: getRowColor(row.rowColor) }}
-                  >
-                    <td className="row-number">{i + 1}</td>
-                    {config.displayMode === 'all' && (
-                      <td className="source-file" title={(row as any).sourceFile}>
-                        {(row as any).sourceFile}
-                      </td>
-                    )}
-                    {visibleHeaders.map((header, j) => {
-                      const rawValue = row.columns[header];
-                      const displayValue = rawValue === null || rawValue === undefined ? '' : String(rawValue);
-                      return (
-                        <td 
-                          key={j}
-                          style={{ 
-                            width: `${getColumnWidth(header)}px`,
-                            maxWidth: `${getColumnWidth(header)}px`
-                          }}
-                          title={displayValue}
-                        >
-                          {displayValue}
-                        </td>
-                      );
-                    })}
-                  </tr>
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="row-number">#</th>
+                <th className="source-file">Plik źródłowy</th>
+                {(loadedData.headers || []).map((header: string, i: number) => (
+                  <th key={i} title={header}>
+                    {header}
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tr>
+            </thead>
+            <tbody>
+              {(loadedData.rows || []).map((row: any, i: number) => (
+                <tr key={i}>
+                  <td className="row-number">{i + 1}</td>
+                  <td className="source-file" title={row.sourceFile}>
+                    {row.sourceFile || 'N/A'}
+                  </td>
+                  {(loadedData.headers || []).map((header: string, j: number) => {
+                    const rawValue = row.columns[header];
+                    const displayValue = rawValue === null || rawValue === undefined ? '' : String(rawValue);
+                    return (
+                      <td key={j} title={displayValue}>
+                        {displayValue}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-          {actualRows.length === 0 && loadedData.totalRows > 0 && (
-            <div className="empty-table">
-              <p>🔍 Brak wyników dla wybranych filtrów</p>
-              <p className="hint">Zmień kryteria filtrowania lub kliknij "Reset wszystkich filtrów"</p>
-            </div>
-          )}
-
-          {loadedData.totalRows === 0 && (
-            <div className="empty-table">
-              <p>📭 Brak danych w załadowanych plikach</p>
-            </div>
-          )}
-        </>
+      {loadedData && loadedData.totalRows === 0 && (
+        <div className="empty-table">
+          <p>Brak danych w załadowanych plikach</p>
+        </div>
       )}
     </div>
   );

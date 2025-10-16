@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { scanDirectoryForExcel, saveRootDirHandle, loadRootDirHandle } from '../utils/browserExcel';
 import './ExcelFilePicker.css';
 
 /**
  * Komponent do wyboru i zarządzania plikami Excel
- * Iteration 1: UI listy plików xlsx z checkboxami
+ * Uproszczony szablon - podstawowy wybór plików
  */
 interface ExcelFilePickerProps {
   onClose?: () => void;
@@ -27,26 +26,7 @@ export default function ExcelFilePicker({ onClose }: ExcelFilePickerProps) {
   } = useAppStore();
 
   const [recursive, setRecursive] = useState(false);
-  const [scanStatus, setScanStatus] = useState<'idle' | 'scanning'>('idle');
-  const [dirHandle, setDirHandle] = useState<FileSystemDirectoryHandle | null>(null);
-
   const isElectron = typeof window !== 'undefined' && window.electronAPI;
-  const hasFileSystemAccess = 'showDirectoryPicker' in window;
-
-  // Wczytaj zapisany folder przy starcie (tylko w trybie browser)
-  useEffect(() => {
-    if (!isElectron && hasFileSystemAccess) {
-      (async () => {
-        const saved = await loadRootDirHandle();
-        if (saved) {
-          setDirHandle(saved);
-          setWorkspaceDir(saved.name);
-          await handleScanFilesBrowser(saved);
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Wybierz folder - hybrydowy tryb
   const handleSelectFolder = async () => {

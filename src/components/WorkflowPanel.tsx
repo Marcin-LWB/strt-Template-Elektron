@@ -1,9 +1,5 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { addTomColumn } from '../utils/excelAnalysis';
-import FileExistChecker from './FileExistChecker';
-import FinalFileNameGenerator from './FinalFileNameGenerator';
-import defaultPaths from '../config/defaultPaths.json';
 import './WorkflowPanel.css';
 
 interface WorkflowPanelProps {
@@ -12,17 +8,17 @@ interface WorkflowPanelProps {
 }
 
 /**
- * Komponent łączący wybór plików Excel i sprawdzanie PDF
- * Layout: 1/3 Excel + 1/3 PDF Check + 1/3 PDF Copy
+ * Komponent panelu roboczego - szablon z 4 sekcjami
+ * Layout: Excel + 3 dodatkowe sekcje do rozbudowy
  */
 export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: WorkflowPanelProps) {
-  const { excelFiles, updateLoadedData, setLoading, setError, config } = useAppStore();
+  const { excelFiles, updateLoadedData, setLoading, setError } = useAppStore();
   const [loadingData, setLoadingData] = useState(false);
 
   const selectedFiles = excelFiles.filter(f => f.selected);
   const isElectron = typeof window !== 'undefined' && window.electronAPI;
 
-  // Załaduj wybrane pliki Excel
+  // Uproszczona funkcja ładowania Excel
   const handleLoadData = async () => {
     if (selectedFiles.length === 0) {
       setError('⚠️ Nie wybrano żadnych plików');
@@ -35,60 +31,20 @@ export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: Workfl
 
     try {
       if (isElectron) {
-        // Electron mode
+        // Electron mode - uproszczone ładowanie
         const paths = selectedFiles.map(f => f.filePath);
-        const result = await window.electronAPI.loadMultipleExcelFiles(paths, config);
+        const result = await window.electronAPI.loadMultipleExcelFiles(paths, {});
 
         if (result.success && result.data) {
-          // Add Tom/Folder column analysis (WAŻNE - tak samo jak w ExcelDataTable)
-          const processedRows = addTomColumn(result.data.rows, result.data.headers);
-          const processedData = {
-            ...result.data,
-            rows: processedRows,
-            headers: ['Folder', ...result.data.headers], // Add Folder as first column
-          };
-          
-          updateLoadedData(processedData);
-          window.electronAPI.logInfo(`Loaded ${processedData.totalRows} rows from ${paths.length} files`);
+          updateLoadedData(result.data);
+          window.electronAPI.logInfo(`Załadowano ${result.data.totalRows} wierszy z ${paths.length} plików`);
           onDataLoaded?.();
         } else {
           setError(result.error || 'Błąd ładowania plików Excel');
         }
       } else {
-        // Browser mode
-        const { readMultipleExcelFiles } = await import('../utils/browserExcel');
-        const fileHandles = selectedFiles
-          .map(f => (f as any).fileHandle)
-          .filter((h): h is FileSystemFileHandle => !!h);
-        
-        if (fileHandles.length === 0) {
-          throw new Error('Brak file handles dla wybranych plików (Browser mode)');
-        }
-
-        const browserData = await readMultipleExcelFiles(fileHandles, config);
-        
-        // Add Tom/Folder column analysis (WAŻNE - tak samo jak w ExcelDataTable)
-        const processedRows = addTomColumn(browserData.rows, browserData.headers);
-        
-        // Convert to ExcelData format
-        const data = {
-          sourceFiles: browserData.sourceFiles.map(sf => ({
-            fileName: sf.fileName,
-            filePath: sf.filePath,
-            selected: sf.selected,
-            sheetName: sf.sheetName,
-            headers: sf.headers,
-            rowCount: sf.rowCount,
-          })),
-          headers: ['Folder', ...browserData.headers], // Add Folder as first column
-          rows: processedRows,
-          totalRows: browserData.totalRows,
-          columnsCount: browserData.columnsCount,
-        };
-        
-        updateLoadedData(data);
-        console.log(`Loaded ${data.totalRows} rows from ${selectedFiles.length} files`);
-        onDataLoaded?.();
+        // Browser mode - uproszczone
+        setError('Tryb przeglądarki nie jest obsługiwany w szablonie');
       }
     } catch (err: any) {
       setError(`❌ Błąd: ${err.message}`);
@@ -130,76 +86,47 @@ export default function WorkflowPanel({ onOpenFilePicker, onDataLoaded }: Workfl
           </button>
         </div>
 
-        {/* Domyślna ścieżka Excel - na dole */}
-        <div className="default-paths-info">
-          <div className="path-item">
-            <small>
-              📁 <strong>Domyślne źródło Excel:</strong><br />
-              <code>{defaultPaths.excelSourcePath}</code>
-            </small>
-          </div>
-        </div>
       </div>
 
-      {/* Sekcja PDF Checker - 1/3 szerokości */}
-      <div className="workflow-section workflow-pdf-checker">
+      {/* Sekcja 2 - Szablon */}
+      <div className="workflow-section workflow-section-2">
         <div className="section-header">
-          <h3>🔍 Sprawdź pliki PDF</h3>
+          <h3>� Sekcja 2</h3>
           <p className="section-description">
-            Weryfikacja istnienia plików PDF zgodnie z numeracją FILE NUMBER (tylko P001)
+            Miejsce na dodatkową funkcjonalność
           </p>
         </div>
         
         <div className="section-content">
-          <FileExistChecker mode="check" />
-        </div>
-
-        {/* Domyślna ścieżka źródłowa PDF - na dole */}
-        <div className="default-paths-info">
-          <div className="path-item">
-            <small>
-              📁 <strong>Domyślne źródło PDF:</strong><br />
-              <code>{defaultPaths.pdfSourcePath}</code>
-            </small>
-          </div>
+          <p>Funkcjonalność do dodania</p>
         </div>
       </div>
 
-      {/* Sekcja Final File Name Generator - pełna szerokość poniżej */}
-      <div className="workflow-section workflow-full-width">
+      {/* Sekcja 3 - Szablon */}
+      <div className="workflow-section workflow-section-3">
         <div className="section-header">
-          <h3>🏷️ Finalne nazwy plików</h3>
+          <h3>⚙️ Sekcja 3</h3>
           <p className="section-description">
-            Generowanie finalnych nazw plików według wzoru: [tomy]_[numery]_[FILE NUMBER]
+            Miejsce na dodatkową funkcjonalność
           </p>
         </div>
         
         <div className="section-content">
-          <FinalFileNameGenerator />
+          <p>Funkcjonalność do dodania</p>
         </div>
       </div>
 
-      {/* Sekcja PDF Copy - 1/3 szerokości */}
-      <div className="workflow-section workflow-pdf-copy">
+      {/* Sekcja 4 - Szablon */}
+      <div className="workflow-section workflow-section-4">
         <div className="section-header">
-          <h3>📋 Kopiowanie plików PDF</h3>
+          <h3>� Sekcja 4</h3>
           <p className="section-description">
-            Kopiowanie plików PDF do folderów docelowych zgodnie z numeracją
+            Miejsce na dodatkową funkcjonalność
           </p>
         </div>
         
         <div className="section-content">
-          <FileExistChecker mode="copy" />
-        </div>
-
-        {/* Domyślny cel kopiowania - na dole */}
-        <div className="default-paths-info">
-          <div className="path-item">
-            <small>
-              📂 <strong>Domyślny cel kopiowania:</strong><br />
-              <code>{defaultPaths.pdfDestinationPath}</code>
-            </small>
-          </div>
+          <p>Funkcjonalność do dodania</p>
         </div>
       </div>
     </div>

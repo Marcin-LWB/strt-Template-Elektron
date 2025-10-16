@@ -1,15 +1,15 @@
-# 🚀 Quick Start Guide - CPK Export Weryfikacja
+# 🚀 Quick Start Guide - Start Template
 
-## Iteration 0 + 1 + 2 Complete!
+## Szablon aplikacji Electron gotowy do użycia!
 
-Aplikacja została skonfigurowana z następującymi funkcjonalnościami:
-- ✅ **Electron** - Dostęp do systemu plików
-- ✅ **Excel Processing** - Odczyt i łączenie plików .xlsx
-- ✅ **State Management** - Zustand z persistencją
-- ✅ **Type Safety** - TypeScript + Zod
-- ✅ **Logging** - Pino z pretty output
-- ✅ **Advanced Filtering** - Tagi folderów i wyszukiwanie dynamiczne
-- ✅ **Collapsible UI** - Zwijane panele filtrów
+Szablon został skonfigurowany z następującymi funkcjonalnościami:
+- ✅ **Electron 33** - Framework aplikacji desktopowej
+- ✅ **React 19** - Nowoczesny interfejs użytkownika
+- ✅ **TypeScript** - Bezpieczność typów
+- ✅ **Vite 7** - Szybki development server
+- ✅ **Zustand** - Lekkie zarządzanie stanem
+- ✅ **ExcelJS** - Podstawowa obsługa plików Excel
+- ✅ **ESLint** - Linting kodu
 
 ---
 
@@ -73,229 +73,197 @@ Instalator będzie w folderze `dist-electron/`
 
 ## 📖 Jak używać aplikacji
 
-### 1. Wybór plików Excel
+### 1. Użycie szablonu
 
-1. Kliknij **"📂 Wybierz folder"**
-2. Wskaż folder zawierający pliki `.xlsx`
-3. (Opcjonalnie) Zaznacz **"Skanuj podkatalogi"**
-4. Aplikacja wyświetli listę znalezionych plików
+1. **Klonuj szablon:**
+   ```bash
+   git clone <repository-url> my-app
+   cd my-app
+   ```
 
-### 2. Zaznaczanie plików
+2. **Zainstaluj zależności:**
+   ```bash
+   npm install
+   ```
 
-- Użyj checkboxów przy każdym pliku
-- **"☑️ Zaznacz wszystkie"** - zaznaczy wszystkie pliki
-- **"☐ Odznacz wszystkie"** - odznacza wszystkie
+3. **Uruchom w development:**
+   ```bash
+   npm run dev      # Browser mode
+   npm run electron:dev  # Electron mode
+   ```
 
-### 3. Ładowanie danych
+### 2. Podstawowe komponenty
 
-1. Wybierz pliki (zaznacz checkboxy)
-2. Kliknij **"📥 Załaduj wybrane pliki"**
-3. Dane pojawią się w tabeli po prawej stronie
+- **ExcelFilePicker** - wybór plików Excel z File System Access API
+- **ExcelDataTable** - wyświetlanie danych w tabeli z możliwością exportu
+- **WorkflowPanel** - panel z 4 sekcjami (Excel + 3 szablony)
+- **CollapsiblePanel** - zwijane sekcje interfejsu
 
-### 4. Przeglądanie danych
+### 3. Rozszerzanie szablonu
 
-- Tabela pokazuje **wszystkie kolumny** z Excela
-- **Kolory wierszy** są zachowane z oryginalnych arkuszy
-- **Kolumna "Folder"** pokazuje hierarchię Tom (Tom 1, Tom 1/Tom 1.1, etc.)
-- **Kolumna "Plik źródłowy"** pokazuje, skąd pochodzi wiersz
-- Przewiń w prawo/lewo, aby zobaczyć wszystkie kolumny
+#### Dodawanie nowych komponentów:
+```typescript
+// src/components/MyComponent.tsx
+import { useAppStore } from '../store/appStore';
 
-### 5. Filtrowanie danych (Iteration 2 - NEW!)
+export default function MyComponent() {
+  const { someState, setSomeState } = useAppStore();
+  
+  return (
+    <div>
+      {/* Twój komponent */}
+    </div>
+  );
+}
+```
 
-#### Panel tagów folderów
-- **Automatyczne tagi** - generowane z kolumny "Folder"
-- **Kolory hierarchiczne**:
-  - 🔵 Tom 1 - niebieski
-  - 🟢 Tom 1/Tom 1.1 - zielony
-  - 🟠 Tom 1/Tom 1.1/Tom 1.1.1 - pomarańczowy
-  - 🔴 Głębsze poziomy - czerwony/fioletowy
-- **Kliknij tag** aby filtrować wiersze
-- **Wiele tagów** - możesz wybrać kilka naraz
-- **Zwiń/rozwiń** sekcję klikając nagłówek
+#### Rozszerzanie stanu:
+```typescript
+// src/store/appStore.ts
+interface AppState {
+  // Istniejące stany...
+  myNewState: string;
+}
 
-#### Wyszukiwanie dynamiczne
-- **FILE NUMBER** - wpisz numer pliku (np. "Tom 1", "PZT")
-- **FILE TITLE (PL)** - wpisz część tytułu
-- **Live search** - wyniki aktualizują się podczas pisania
-- **Case-insensitive** - wielkość liter nie ma znaczenia
+const useAppStore = create<AppState & AppActions>((set, get) => ({
+  // Istniejące stany...
+  myNewState: '',
+  
+  // Nowe akcje
+  setMyNewState: (value: string) => set({ myNewState: value }),
+}));
+```
 
-#### Reset filtrów
-- Przycisk **"🔄 Reset wszystkich filtrów"** pojawia się gdy aktywne są filtry
-- Czyści tagi, wyszukiwanie i pokazuje wszystkie wiersze
+### 4. Excel Processing
 
-### 6. Konfiguracja
+Szablon zawiera podstawową obsługę Excel:
 
-Kliknij **"⚙️ Konfiguracja"** w nagłówku:
-
-- **Liczba kolumn do odczytu** (domyślnie: 10)
-- **Indeks kolumny z kolorem** (domyślnie: 1)
-- **Pomijaj puste wiersze** (domyślnie: włączone)
-- **Indeks wiersza nagłówków** (domyślnie: 0)
+```typescript
+// Ładowanie pliku Excel
+const loadExcelFile = async (file: File) => {
+  const ExcelJS = await import('exceljs');
+  const workbook = new ExcelJS.Workbook();
+  const arrayBuffer = await file.arrayBuffer();
+  await workbook.xlsx.load(arrayBuffer);
+  
+  const worksheet = workbook.getWorksheet(1);
+  // Przetwarzanie danych...
+};
+```
 
 ---
 
 ## 🗂️ Struktura Projektu
 
 ```
-cpk-exportDocu/
+start-template/
 ├── src/
 │   ├── components/          # React components
-│   │   ├── ExcelFilePicker.tsx     # Wybór plików
-│   │   ├── ExcelDataTable.tsx      # Tabela danych
-│   │   ├── FilterPanel.tsx         # Panel filtrów (NEW)
-│   │   ├── CollapsiblePanel.tsx    # Zwijany panel
-│   │   └── WorkflowPanel.tsx       # Workflow
+│   │   ├── ExcelFilePicker.tsx     # Wybór plików Excel
+│   │   ├── ExcelDataTable.tsx      # Tabela danych Excel
+│   │   ├── CollapsiblePanel.tsx    # Zwijany panel UI
+│   │   └── WorkflowPanel.tsx       # 4-sekcyjny panel
 │   ├── store/
-│   │   └── appStore.ts             # Zustand state
+│   │   └── appStore.ts             # Zustand state management
 │   ├── types/
-│   │   ├── excel.types.ts          # Typy Excel
+│   │   ├── excel.types.ts          # Typy dla Excel
 │   │   ├── ipc.types.ts            # IPC kontrakty
-│   │   └── electron.d.ts           # Electron API
+│   │   └── electron.d.ts           # Electron API types
 │   ├── utils/
-│   │   ├── excelAnalysis.ts        # Analiza Tom/Folder (NEW)
-│   │   └── browserExcel.ts         # Browser Excel
+│   │   └── browserExcel.ts         # Excel utilities
 │   ├── AppNew.tsx                  # Główny komponent
-│   └── main.tsx                    # React entry
+│   └── main.tsx                    # React entry point
 │
 ├── electron/
 │   ├── services/
-│   │   ├── fileService.js          # Operacje na plikach
-│   │   └── excelService.js         # Przetwarzanie Excel
+│   │   ├── fileService.js          # File system operations
+│   │   └── excelService.js         # Excel processing
 │   ├── utils/
-│   │   └── logger.js               # Pino logger
+│   │   └── logger.js               # Logging utility
 │   ├── main.js                     # Electron main process
 │   └── preload.js                  # IPC bridge
 │
-├── IMPLEMENTATION.md               # Log implementacji
-└── QUICKSTART.md                   # Ten plik
+├── package.json                    # Dependencies & scripts
+├── tsconfig.json                   # TypeScript config
+├── vite.config.ts                  # Vite configuration
+├── eslint.config.js                # ESLint rules
+├── README.md                       # Dokumentacja projektu
+├── QUICKSTART.md                   # Ten plik
+└── agents.md                       # Tech docs
 ```
 
 ---
 
-## 🧪 Testowanie
+## 🔧 Dostępne skrypty
 
-### Przygotuj dane testowe
+```bash
+npm run dev              # Vite dev server (browser mode)
+npm run electron:dev     # Electron development mode
+npm run build            # Build production
+npm run preview          # Preview production build
+npm run lint             # Run ESLint
+```
 
-1. Utwórz folder testowy, np. `C:\TestExcel\`
-2. Umieść tam kilka plików `.xlsx`
-3. Pliki powinny mieć:
+---
+
+## 🧪 Testowanie szablonu
+
+### Przygotuj testowe pliki Excel
+
+1. Utwórz folder testowy z kilkoma plikami `.xlsx`
+2. Pliki powinny mieć standardową strukturę:
    - Nagłówki w pierwszym wierszu
    - Dane w kolejnych wierszach
-   - (Opcjonalnie) Kolory w drugiej kolumnie
-   - (Opcjonalnie) Kolumnę "FILE NUMBER" z wartościami jak "Tom 1", "Tom 1.1"
 
 ### Przykładowa struktura Excel:
 
-| FILE NUMBER | Status | FILE TITLE (PL) | Data | Uwagi |
-|-------------|--------|-----------------|------|-------|
-| Tom 1       | OK     | Dokumentacja projektowa | 2025 | Główny |
-| Tom 1.1     | OK     | Część opisowa | 2025 | Podsekcja |
-| Tom 1.1.1   | ERROR  | Szczegóły | 2025 | Podsekcja 2 |
-| Tom 2       | OK     | Projekty budowlane | 2025 | OK |
+| ID | Nazwa | Status | Data | Uwagi |
+|----|-------|--------|------|-------|
+| 1  | Element A | OK | 2025-10-16 | Test |
+| 2  | Element B | PENDING | 2025-10-16 | Test |
 
 ---
 
 ## 🐛 Troubleshooting
 
 ### Electron nie startuje
-
-Sprawdź czy Vite działa:
 ```bash
+# Sprawdź czy Vite działa
 npm run dev
-```
-Otwórz `http://localhost:5173` - powinien pokazać aplikację w przeglądarce.
-
-### Błąd "Electron API niedostępne"
-
-To normalne w trybie browser. Musisz użyć Electron:
-```bash
+# Potem uruchom Electron
 npm run electron:dev
 ```
 
-### Nie widać plików Excel
-
-1. Sprawdź czy folder zawiera pliki `.xlsx`
-2. Sprawdź konsolę Electron (DevTools otworzy się automatycznie)
-3. Logi są w konsoli
-
-### Filtry nie działają
-
-1. Upewnij się, że dane zawierają kolumnę "FILE NUMBER" z wartościami "Tom X"
-2. Kolumna "Folder" powinna być automatycznie wypełniona
-3. Jeśli brak tagów - sprawdź czy FILE NUMBER zawiera "Tom" w nazwach
-
-### Błędy w logach
-
-Otwórz DevTools w Electron:
-- Windows: `Ctrl + Shift + I`
-- Mac: `Cmd + Option + I`
-
-Sprawdź zakładkę Console i Network.
-
----
-
-## 📊 IPC Channels (dla developerów)
-
-Dostępne kanały komunikacji:
-
-**File Operations:**
-- `file:select-xlsx-directory` - Wybór folderu
-- `file:scan-xlsx-files` - Skanowanie plików
-
-**Excel Operations:**
-- `excel:load-file` - Wczytaj pojedynczy plik
-- `excel:load-multiple-files` - Wczytaj wiele plików
-
-**Config:**
-- `config:get` - Pobierz konfigurację
-- `config:set` - Zapisz konfigurację
-
-**Logs:**
-- `log:info`, `log:error`, `log:warn` - Logowanie
-
----
-
-## 🎯 Następne Kroki (Roadmap)
-
-✅ **Iteration 0**: Fundament Electron + IPC  
-✅ **Iteration 1**: Wybór i ładowanie plików  
-✅ **Iteration 2**: Filtrowanie, tagi, wyszukiwanie (COMPLETE!)  
-⬜ **Iteration 3**: Weryfikacja vs system plików  
-⬜ **Iteration 4**: Operacje na plikach  
-⬜ **Iteration 5**: Automatyzacja i polish  
-
----
-
-## 📝 Logi
-
-Logi w development wyświetlają się w konsoli terminala i w DevTools.
-
-W production logi są zapisywane w:
-```
-%APPDATA%/cpk-export-weryfikacja/logs/app.log
+### Błędy TypeScript
+```bash
+# Sprawdź typy
+npx tsc --noEmit
 ```
 
----
-
-## 💡 Wskazówki
-
-1. **Zachowaj stan** - Aplikacja zapisuje wybrany folder w IndexedDB
-2. **Kolory** - Kolory z Excela są zachowywane i wyświetlane w tabeli
-3. **Performance** - Dla bardzo dużych plików (>10k wierszy) może być wolniej
-4. **Konfiguracja** - Zmień liczbę kolumn jeśli Excel ma więcej/mniej
+### Problemy z Excel
+Sprawdź konsolę deweloperską (`Ctrl+Shift+I` w Electron) dla błędów.
 
 ---
 
-## 🆘 Pomoc
+## � Kolejne kroki
 
-Jeśli masz problemy:
-1. Sprawdź logi w konsoli
-2. Zobacz `IMPLEMENTATION.md` dla szczegółów technicznych
-3. Przejrzyj kod w `src/` i `electron/`
+1. **Dostosuj UI** - edytuj komponenty w `src/components/`
+2. **Rozszerz funkcjonalność** - dodaj nowe features do `src/store/`
+3. **Dodaj nowe typy** - w `src/types/`
+4. **Dostosuj styl** - edytuj pliki `.css`
 
 ---
 
-**Powodzenia! 🚀**
+## � Wskazówki dla developerów
 
-CPK Export Weryfikacja v1.0.0  
-Iteration 0 + 1 + 2 Complete
+1. **State management** - Używaj Zustand dla prostego stanu
+2. **Excel processing** - ExcelJS jest już skonfigurowany
+3. **IPC komunikacja** - Zobacz `electron/preload.js` i `src/types/electron.d.ts`
+4. **File System** - Użyj File System Access API w browser + Electron IPC
+
+---
+
+**Powodzenia z rozwojem aplikacji! 🚀**
+
+Start Template v1.0.0  
+Gotowy szablon Electron + React + TypeScript

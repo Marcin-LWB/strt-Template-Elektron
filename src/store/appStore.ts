@@ -24,39 +24,17 @@ interface AppState {
   setLoadedData: (data: ExcelData | null) => void;
   updateLoadedData: (data: ExcelData) => void;
   
-  // Config
-  config: ExcelConfig;
-  updateConfig: (config: Partial<ExcelConfig>) => void;
-  
   // UI state
   loading: boolean;
   setLoading: (loading: boolean) => void;
   error: string | null;
   setError: (error: string | null) => void;
   
-  // PDF directories (browser / shared)
-  pdfSourceFolder: string | null;
-  setPdfSourceFolder: (path: string | null) => void;
-  pdfSourceHandle: FileSystemDirectoryHandle | null;
-  setPdfSourceHandle: (handle: FileSystemDirectoryHandle | null) => void;
-  pdfDestinationFolder: string | null;
-  setPdfDestinationFolder: (path: string | null) => void;
-  pdfDestinationHandle: FileSystemDirectoryHandle | null;
-  setPdfDestinationHandle: (handle: FileSystemDirectoryHandle | null) => void;
-  
   // Actions
   reset: () => void;
 }
 
-const defaultConfig: ExcelConfig = {
-  columnsToRead: 10,
-  colorColumnIndex: 1,
-  skipEmptyRows: true,
-  headerRowIndex: 0,
-  columnWidth: 150,
-  displayMode: 'custom',
-  customColumns: DEFAULT_CUSTOM_COLUMNS,
-};
+// Usunięto defaultConfig - uproszczony szablon
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -65,13 +43,8 @@ export const useAppStore = create<AppState>()(
       workspaceDir: null,
       excelFiles: [],
       loadedData: null,
-      config: defaultConfig,
       loading: false,
       error: null,
-  pdfSourceFolder: null,
-  pdfSourceHandle: null,
-  pdfDestinationFolder: null,
-  pdfDestinationHandle: null,
       
       // Workspace actions
       setWorkspaceDir: (dir) => set({ workspaceDir: dir }),

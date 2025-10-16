@@ -1,130 +1,256 @@
-# CPK-Export-Weryfikacja
+# Start Template# Start Template
 
-**Wersja:** v1.0.0 | **UI:** Redesign v2 | **Data:** 2025-10-07
 
-Aplikacja desktopowa (Electron + React), która usprawnia weryfikację i eksport zasobów multimedialnych na podstawie arkuszy Excel.
 
-**Status:** ✅ Iteration 0 + 1 + 2 Complete
+**Wersja:** v1.0.0 | **Typ:** Szablon Electron | **Data:** 2025-10-16**Wersja:** v1.0.0 | **Typ:** Szablon ---
 
----
 
-## 🚀 Szybki start
 
-```bash
+Szablon aplikacji desktopowej (Electron + React + TypeScript) z podstawową funkcjonalnością przetwarzania plików Excel.## 🎯 Cel szablonu
+
+
+
+**Status:** ✅ Szablon gotowy do użycia**Start Template** to gotowy do użycia szablon aplikacji Electron z React, który zapewnia:
+
+
+
+---- 🚀 **Szybki start** – kompletna konfiguracja Electron + React + TypeScript
+
+- 📊 **Excel processing** – podstawowa obsługa plików Excel (wybór, ładowanie, wyświetlanie)
+
+## 🚀 Szybki start- 🏗️ **Modułowa struktura** – łatwe rozszerzanie o nowe funkcjonalności
+
+- 🎨 **UI Components** – gotowe komponenty interfejsu użytkownika
+
+```bash- ⚙️ **Development tools** – ESLint, TypeScript, Vite dev server | **Data:** 2025-10-16
+
 # Instalacja zależności
-npm install
 
-# Uruchomienie w trybie developerskim (Browser)
+npm installSzablon aplikacji desktopowej (Electron + React + TypeScript) z podstawową funkcjonalnością przetwarzania plików Excel.
+
+
+
+# Uruchomienie w trybie developerskim (Browser)**Status:** ✅ Szablon gotowy do użycia
+
 npm run dev
 
+---
+
 # Uruchomienie w trybie Electron
-npm run electron:dev
 
-# Build produkcyjny
-npm run build
-```
+npm run electron:dev## 🚀 Szybki start
 
-**Otwórz aplikację:** http://localhost:5173
+
+
+# Build produkcyjny```bash
+
+npm run build# Instalacja zależności
+
+```npm install
+
+
+
+**Otwórz aplikację:** http://localhost:5173# Uruchomienie w trybie developerskim (Browser)
+
+npm run dev
 
 ---
 
-## ✨ Nowości w UI Redesign v2
+# Uruchomienie w trybie Electron
 
-### 🎨 Zwijany Panel Roboczy
-- Jeden panel zawierający **Pliki Excel** i **Sprawdź pliki PDF**
-- Możliwość zwijania/rozwijania dla większej przestrzeni roboczej
-- Layout 1/5 (Excel) + 4/5 (PDF Checker)
+## ✨ Funkcjonalności szablonunpm run electron:dev
 
-### ⚡ Domyślne ścieżki projektu
-- Konfiguracja w `src/config/defaultPaths.json`
-- Szybkie ładowanie jednym kliknięciem (⚡ Domyślna)
-- 3 predefiniowane ścieżki: Excel, PDF źródło, PDF cel
 
-### 🔢 Numeracja 4-cyfrowa
-- Pliki PDF kopiowane z formatem: `0001_P001XXX.pdf`
-- Zamiast: `1_P001XXX.pdf`
-- Profesjonalny format zgodny ze standardami
+
+### 🏗️ Architektura aplikacji# Build produkcyjny
+
+- **Electron 33** - framework aplikacji desktopowejnpm run build
+
+- **React 19** - interfejs użytkownika z komponentami funkcyjnymi```
+
+- **TypeScript** - bezpieczność typów i lepsze DX
+
+- **Vite 7** - szybki build tool i dev server**Otwórz aplikację:** http://localhost:5173
+
+- **Zustand** - lekkie zarządzanie stanem
+
+---
+
+### 📊 Podstawowe komponenty
+
+- **ExcelFilePicker** - wybór i skanowanie plików Excel## ✨ Funkcjonalności szablonu
+
+- **ExcelDataTable** - wyświetlanie danych w tabeli
+
+- **WorkflowPanel** - 4-sekcyjny panel workflow### �️ Architektura aplikacji
+
+- **CollapsiblePanel** - zwijane panele UI- **Electron 33** - framework aplikacji desktopowej
+
+- **React 19** - interfejs użytkownika z komponentami funkcyjnymi
+
+### 🔧 Gotowe funkcjonalności- **TypeScript** - bezpieczność typów i lepsze DX
+
+- ✅ Wybór folderów i plików Excel (File System Access API + Electron)- **Vite 7** - szybki build tool i dev server
+
+- ✅ Ładowanie i parsowanie plików .xlsx (ExcelJS)- **Zustand** - lekkie zarządzanie stanem
+
+- ✅ Podstawowe wyświetlanie danych w tabeli
+
+- ✅ Export danych do Excel### � Podstawowe komponenty
+
+- ✅ Responsywny layout z trzema głównymi sekcjami- **ExcelFilePicker** - wybór i skanowanie plików Excel
+
+- ✅ Zarządzanie stanem przez Zustand- **ExcelDataTable** - wyświetlanie danych w tabeli
+
+- ✅ Typescript konfiguracja i linting- **WorkflowPanel** - 4-sekcyjny panel workflow
+
+- **CollapsiblePanel** - zwijane panele UI
 
 ### 📖 Dokumentacja
-- **[QUICKSTART.md](./QUICKSTART.md)** - Szybki start i podstawy użytkowania
-- **[USER_GUIDE.md](./USER_GUIDE.md)** - Przewodnik użytkownika
-- **[IMPLEMENTATION.md](./IMPLEMENTATION.md)** - Log implementacji i postęp
-- **[ITERATION2_SUMMARY.md](./ITERATION2_SUMMARY.md)** - Podsumowanie Iteration 2
-- **[UI_REDESIGN_V2.md](./UI_REDESIGN_V2.md)** - Szczegółowy changelog
-- **[UI_VISUAL_GUIDE.md](./UI_VISUAL_GUIDE.md)** - Wizualna dokumentacja
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Architektura techniczna
-- **[DOCS_INDEX.md](./DOCS_INDEX.md)** - Indeks wszystkich dokumentów
 
-### 🎯 Ukończone funkcjonalności (Iteration 0-2)
-- ✅ Wybór folderów i skanowanie plików Excel
-- ✅ Ładowanie i łączenie wielu plików .xlsx
-- ✅ Zachowanie kolorów wierszy z Excela
-- ✅ Dynamiczne wyświetlanie kolumn
-- ✅ Ekstrakcja hierarchii folderów (Tom 1, Tom 1/Tom 1.1)
-- ✅ **Filtrowanie tagami folderów** (kolory hierarchiczne)
-- ✅ **Wyszukiwanie dynamiczne** (FILE NUMBER, FILE TITLE)
-- ✅ **Zwijane panele filtrów**
-- ✅ **Reset filtrów**
+- **[QUICKSTART.md](./QUICKSTART.md)** - Szybki start i instrukcje### 🔧 Gotowe funkcjonalności
 
----
+- **[agents.md](./agents.md)** - Dokumentacja techniczna dla developerów- ✅ Wybór folderów i plików Excel (File System Access API + Electron)
 
-## Misja i cele
+- ✅ Ładowanie i parsowanie plików .xlsx (ExcelJS)
 
-- � **Weryfikacja danych** – konsolidacja i kontrola jakości danych z wielu arkuszy Excel.
-- 🧮 **Automatyzacja operacji** – kopiowanie, numerowanie i strukturyzowanie plików według reguł opisanych w Excelach.
-- 🎯 **Porównanie źródeł** – szybkie zestawienie zawartości Excel vs pliki w katalogach, z wizualnym wyróżnianiem różnic.
-- 🧩 **Modułowość** – możliwość rozbudowy o kolejne narzędzia bez przebudowy rdzenia.
+---- ✅ Podstawowe wyświetlanie danych w tabeli
 
-## Docelowe persony i scenariusze
+- ✅ Export danych do Excel
 
-| Persona | Potrzeba | Najważniejsze ekrany |
-| --- | --- | --- |
-| Koordynator produkcji | Zidentyfikować brakujące nagrania/zdjęcia względem arkusza Excel | Panel plików, widok porównań | 
-| Analityk danych | Zweryfikować poprawność struktury arkusza i przygotować dane do eksportu | Łączenie arkuszy, tabela wynikowa |
-| Asystent techniczny | Szybko skopiować i ponumerować zasoby zgodnie z instrukcją | Moduł operacji na plikach |
+## 🎯 Cel szablonu- ✅ Responsywny layout z trzema głównymi sekcjami
 
-## Modułowa architektura logiczna
+- ✅ Zarządzanie stanem przez Zustand
 
-1. **Shell aplikacji (Electron + React)**  
-  - startuje okno, ładuje bundlowany frontend, wystawia IPC dla operacji plikowych, zarządza aktualizacjami.
+**Start Template** to gotowy do użycia szablon aplikacji Electron z React, który zapewnia:- ✅ Typescript konfiguracja i linting
+
+
+
+- 🚀 **Szybki start** – kompletna konfiguracja Electron + React + TypeScript### 📖 Dokumentacja
+
+- 📊 **Excel processing** – podstawowa obsługa plików Excel (wybór, ładowanie, wyświetlanie)- **[QUICKSTART.md](./QUICKSTART.md)** - Szybki start i instrukcje
+
+- 🏗️ **Modułowa struktura** – łatwe rozszerzanie o nowe funkcjonalności- **[agents.md](./agents.md)** - Dokumentacja techniczna dla developerów
+
+- 🎨 **UI Components** – gotowe komponenty interfejsu użytkownika
+
+- ⚙️ **Development tools** – ESLint, TypeScript, Vite dev server---
+
+
+
+## 📁 Struktura projektu## Misja i cele
+
+
+
+```- � **Weryfikacja danych** – konsolidacja i kontrola jakości danych z wielu arkuszy Excel.
+
+start-template/- 🧮 **Automatyzacja operacji** – kopiowanie, numerowanie i strukturyzowanie plików według reguł opisanych w Excelach.
+
+├── electron/                   # Proces główny Electron- 🎯 **Porównanie źródeł** – szybkie zestawienie zawartości Excel vs pliki w katalogach, z wizualnym wyróżnianiem różnic.
+
+│   ├── main.js                # Entry point Electron- 🧩 **Modułowość** – możliwość rozbudowy o kolejne narzędzia bez przebudowy rdzenia.
+
+│   ├── preload.js             # Preload script dla IPC
+
+│   └── services/              # Serwisy backendowe## Docelowe persony i scenariusze
+
+├── public/                    # Zasoby statyczne
+
+├── src/                       # Kod źródłowy React| Persona | Potrzeba | Najważniejsze ekrany |
+
+│   ├── components/            # Komponenty UI| --- | --- | --- |
+
+│   ├── store/                 # Zarządzanie stanem (Zustand)| Koordynator produkcji | Zidentyfikować brakujące nagrania/zdjęcia względem arkusza Excel | Panel plików, widok porównań | 
+
+│   ├── types/                 # Definicje TypeScript| Analityk danych | Zweryfikować poprawność struktury arkusza i przygotować dane do eksportu | Łączenie arkuszy, tabela wynikowa |
+
+│   └── utils/                 # Funkcje pomocnicze| Asystent techniczny | Szybko skopiować i ponumerować zasoby zgodnie z instrukcją | Moduł operacji na plikach |
+
+├── package.json               # Konfiguracja i zależności
+
+├── tsconfig.json              # Konfiguracja TypeScript## Modułowa architektura logiczna
+
+├── vite.config.ts             # Konfiguracja Vite
+
+└── eslint.config.js           # Konfiguracja lintera1. **Shell aplikacji (Electron + React)**  
+
+```  - startuje okno, ładuje bundlowany frontend, wystawia IPC dla operacji plikowych, zarządza aktualizacjami.
+
 2. **Workspace Manager**  
-  - wskazuje folder roboczy, przechowuje ścieżki i metadane plików `xlsx`, pozwala zaznaczać pliki (checkboxy) i zapamiętuje wybór.
+
+## 🚀 Jak zacząć  - wskazuje folder roboczy, przechowuje ścieżki i metadane plików `xlsx`, pozwala zaznaczać pliki (checkboxy) i zapamiętuje wybór.
+
 3. **Excel Processing Service**  
-  - odczyt arkuszy (SheetJS/ExcelJS), pobieranie nagłówków, łączenie pierwszych arkuszy, odwzorowanie kolorów z drugiej kolumny, eksport intermediate data.
-4. **Verification Engine**  
-  - porównuje dane arkuszy z realnym stanem plików, generuje raport różnic, wspiera kolorowanie/zaznaczanie rekordów wymagających akcji.
-5. **File Operations Service**  
-  - kopiowanie i numerowanie plików, tworzenie struktury katalogów, walidacja ścieżek docelowych, obsługa konfliktów i log błędów.
+
+1. **Klonuj szablon:**  - odczyt arkuszy (SheetJS/ExcelJS), pobieranie nagłówków, łączenie pierwszych arkuszy, odwzorowanie kolorów z drugiej kolumny, eksport intermediate data.
+
+   ```bash4. **Verification Engine**  
+
+   git clone <url-szablonu> my-electron-app  - porównuje dane arkuszy z realnym stanem plików, generuje raport różnic, wspiera kolorowanie/zaznaczanie rekordów wymagających akcji.
+
+   cd my-electron-app5. **File Operations Service**  
+
+   ```  - kopiowanie i numerowanie plików, tworzenie struktury katalogów, walidacja ścieżek docelowych, obsługa konfliktów i log błędów.
+
 6. **Presentation / UI Layer**  
-  - zarządzanie stanem (np. Zustand/Redux Toolkit), widoki tabelaryczne, panel statusów, logi operacji, moduł konfiguracyjny.
-7. **Persistencja i konfiguracja**  
-  - ustawienia użytkownika, parametry (liczba analizowanych kolumn, mapowanie kolorów, reguły numeracji) w `appConfig.json` lub IndexedDB.
+
+2. **Zainstaluj zależności:**  - zarządzanie stanem (np. Zustand/Redux Toolkit), widoki tabelaryczne, panel statusów, logi operacji, moduł konfiguracyjny.
+
+   ```bash7. **Persistencja i konfiguracja**  
+
+   npm install  - ustawienia użytkownika, parametry (liczba analizowanych kolumn, mapowanie kolorów, reguły numeracji) w `appConfig.json` lub IndexedDB.
+
+   ```
 
 ## Proponowana struktura katalogów
 
-```
-cpk-export-weryfikacja/
-├── apps/
-│   ├── desktop-shell/          # Proces główny Electron + preload
+3. **Uruchom w trybie developerskim:**
+
+   ```bash```
+
+   npm run dev          # Browser modecpk-export-weryfikacja/
+
+   npm run electron:dev # Electron mode├── apps/
+
+   ```│   ├── desktop-shell/          # Proces główny Electron + preload
+
 │   └── renderer/               # Aplikacja React (Vite)
-├── packages/
-│   ├── excel-engine/           # Logika odczytu i łączenia arkuszy
-│   ├── verification-core/      # Porównania, reguły, raporty
-│   ├── file-automation/        # Operacje kopiowania, numerowania, tworzenia katalogów
+
+4. **Buduj i dostosowuj:**├── packages/
+
+   - Edytuj komponenty w `src/components/`│   ├── excel-engine/           # Logika odczytu i łączenia arkuszy
+
+   - Dodaj nowe funkcjonalności w `src/store/`│   ├── verification-core/      # Porównania, reguły, raporty
+
+   - Rozszerzaj typy w `src/types/`│   ├── file-automation/        # Operacje kopiowania, numerowania, tworzenia katalogów
+
 │   └── ui-toolkit/             # Reużywalne komponenty UI (tabela, statusy, kolorowanie)
-├── resources/                  # Szablony raportów, ikony, style globalne
+
+## 🔧 Dostępne komendy├── resources/                  # Szablony raportów, ikony, style globalne
+
 ├── configs/
-│   ├── app-config.schema.json  # Walidacja ustawień
-│   └── environments/           # Profile (dev, staging, production)
-├── scripts/                    # Automatyzacje (build, release, lint)
-└── docs/
-   └── architecture.md         # Bieżące notatki techniczne
+
+```bash│   ├── app-config.schema.json  # Walidacja ustawień
+
+npm run dev              # Uruchom Vite dev server│   └── environments/           # Profile (dev, staging, production)
+
+npm run electron:dev     # Uruchom w trybie Electron├── scripts/                    # Automatyzacje (build, release, lint)
+
+npm run build            # Build produkcyjny└── docs/
+
+npm run preview          # Podgląd build'a   └── architecture.md         # Bieżące notatki techniczne
+
+npm run lint             # Uruchom ESLint```
+
 ```
 
 > Startowo repo może wykorzystać istniejącą strukturę Vite/Electron, ale powyższy układ ułatwia późniejszy podział na pakiety oraz testowanie jednostkowe poza rendererem.
 
+---
+
 ## Kluczowe przepływy użytkownika
 
+**Start Template** - gotowy punkt startowy dla aplikacji Electron z React i TypeScript 🚀
 1. **Wybór plików źródłowych**
   - użytkownik wybiera folder zawierający `xlsx`, aplikacja skanuje go i prezentuje listę z checkboxami.
   - Workspace Manager zapamiętuje wybór oraz ostatnio użyte lokalizacje.

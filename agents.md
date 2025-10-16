@@ -2,20 +2,25 @@
 
 ## Opis projektu
 
-**CSV Browser** to aplikacja React + TypeScript wykorzystująca File System Access API do lokalnego przeglądania plików CSV w strukturze folderów. Aplikacja działa całkowicie w przeglądarce bez potrzeby backendu.
+**Start Template** to szablon aplikacji Electron + React + TypeScript z podstawową funkcjonalnością przetwarzania plików Excel. Aplikacja działa zarówno w przeglądarce (File System Access API) jak i jako aplikacja desktopowa (Electron).
 
 ## 🔧 Stack technologiczny
 
 ### Frontend
-- **React 18** - biblioteka UI
+- **React 19** - biblioteka UI
 - **TypeScript** - język programowania
 - **Vite 7** - build tool i dev server
 - **CSS3** - stylowanie (bez framework'ów CSS)
 
+### Backend/Desktop
+- **Electron 33** - framework aplikacji desktopowej
+- **Node.js** - runtime dla procesu głównego
+
 ### APIs i biblioteki
-- **File System Access API** - dostęp do lokalnych plików
-- **IndexedDB** - trwałe przechowywanie danych
-- **idb-keyval** - wrapper dla IndexedDB
+- **File System Access API** - dostęp do plików w przeglądarce
+- **ExcelJS** - przetwarzanie plików Excel
+- **Zustand** - zarządzanie stanem aplikacji
+- **IndexedDB** - trwałe przechowywanie danych (przeglądarki)
 
 ### Narzędzia deweloperskie
 - **ESLint** - linting kodu
@@ -23,31 +28,57 @@
 
 ## 📁 Architektura aplikacji
 
-### Komponenty React
+### Główne komponenty React
 ```
-App.tsx - główny komponent z logiką biznesową
-├── useState hooks:
-│   ├── status: 'idle' | 'loading' | 'ready' | 'error'
-│   ├── rootDir: FileSystemDirectoryHandle | null
-│   ├── rows: CsvEntry[]
-│   ├── error: string | null
-│   └── recursive: boolean
-└── Functions:
-    ├── pickRootFolder() - wybór folderu głównego
-    ├── rescan() - skanowanie folderów
-    └── forgetFolder() - czyszczenie danych
+AppNew.tsx - główny komponent aplikacji
+├── 3-sekcyjny layout (app-header, workflow-panel, excel-data-table)
+├── State management przez Zustand
+└── Konfiguracja w CollapsiblePanel
+
+WorkflowPanel.tsx - panel workflow
+├── 4 sekcje: Excel + 3 template sekcje
+├── Integracja z ExcelFilePicker
+└── Szablon dla nowych funkcjonalności
+
+ExcelFilePicker.tsx - wybór plików Excel
+├── File System Access API (browser)
+├── Electron IPC (desktop)
+├── Rekurencyjne skanowanie folderów
+└── Zarządzanie listą plików
+
+ExcelDataTable.tsx - wyświetlanie danych
+├── Tabela z dynamicznymi kolumnami
+├── Export do Excel (ExcelJS)
+├── Podstawowe operacje na danych
+└── Loading states i error handling
 ```
 
-### Moduły utility
+### Electron Architecture
 ```
-fs-utils.ts
-├── listCsvFiles() - rekurencyjne skanowanie CSV
-├── walkDir() - pomocnicza funkcja traversal
-├── joinPath() - łączenie ścieżek
-└── ensureReadPermission() - zarządzanie uprawnieniami
+electron/main.js - główny proces Electron
+├── Okno aplikacji
+├── IPC handlers
+└── Menu aplikacji
 
-lib/storage.ts
-├── saveRootDirHandle() - zapis do IndexedDB
+electron/preload.js - bridge IPC
+├── Bezpieczny dostęp do Node.js APIs
+├── File system operations
+└── Excel processing APIs
+
+electron/services/
+├── fileService.js - operacje na plikach
+└── excelService.js - przetwarzanie Excel
+```
+
+### State Management (Zustand)
+```
+store/appStore.ts
+├── AppState interface
+├── Excel data management
+├── Loading states
+├── Error handling
+└── Persistence middleware
+```
 ├── loadRootDirHandle() - odczyt z IndexedDB
 └── clearRootDirHandle() - usuwanie z IndexedDB
 
@@ -201,20 +232,28 @@ Permission state: 'prompt' or 'denied'
 - Rekurencyjne skanowanie: zależne od głębokości
 - UI pozostaje responsywne (async/await)
 
-## 🔮 Możliwe rozszerzenia
+## 🔮 Możliwe rozszerzenia szablonu
 
-### Funkcjonalności
-1. **CSV parsing** - PapaParse integration
-2. **File editing** - createWritable() API
-3. **Search/filter** - client-side filtering
-4. **Export** - download lists as JSON/CSV
-5. **Auto-refresh** - FileSystemWatcher (gdy dostępne)
+### Funkcjonalności Excel
+1. **Advanced filtering** - filtrowanie po kolumnach, wartościach
+2. **Data validation** - walidacja danych przed zapisem
+3. **Chart generation** - generowanie wykresów z danych
+4. **Export formats** - PDF, CSV, JSON export
+5. **Real-time collaboration** - wspólna edycja plików
+
+### UI/UX
+1. **Dark mode** - tryb ciemny
+2. **Themes** - konfigurowalne motywy
+3. **Drag & drop** - przeciąganie plików
+4. **Virtual scrolling** - duże zestawy danych
+5. **Advanced search** - zaawansowana filtrowanie
 
 ### Techniczne
-1. **PWA** - Service Worker + manifest
-2. **Web Workers** - heavy scanning operations
-3. **Virtual scrolling** - large file lists
-4. **Drag & drop** - alternative folder selection
+1. **Database integration** - SQLite, PostgreSQL
+2. **API integration** - REST, GraphQL
+3. **File watchers** - auto-refresh przy zmianach
+4. **Plugin system** - rozszerzenia zewnętrzne
+5. **Auto-updates** - automatyczne aktualizacje Electron
 
 ---
 

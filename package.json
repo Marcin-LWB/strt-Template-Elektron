@@ -1,10 +1,10 @@
 {
-  "name": "cpk-export-weryfikacja",
+  "name": "start-template",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "main": "electron/main.js",
-  "description": "Weryfikacja i automatyzacja eksportu zasobów multimedialnych",
+  "description": "Szablon aplikacji Electron + React + TypeScript z obsługą Excel",
   "author": "Marcin Ostrowski",
   "scripts": {
     "dev": "vite",
