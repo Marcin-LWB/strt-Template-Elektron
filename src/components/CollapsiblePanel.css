@@ -1,0 +1,62 @@
+.collapsible-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.panel-header {
+  background: #f8f9fa;
+  padding: 16px 24px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #e9ecef;
+  transition: background 0.2s ease;
+}
+
+.panel-header:hover {
+  background: #e9ecef;
+}
+
+.panel-header:active {
+  background: #dee2e6;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d2d2d;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.panel-icon {
+  display: inline-block;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  color: #667eea;
+}
+
+.collapsible-panel.collapsed .panel-header {
+  border-bottom: none;
+}
+
+.panel-content {
+  padding: 24px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

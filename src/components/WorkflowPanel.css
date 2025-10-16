@@ -1,0 +1,173 @@
+.workflow-panel {
+  display: flex;
+  flex-wrap: wrap; /* Pozwól na zawijanie sekcji */
+  gap: 15px;
+  width: 100%;
+  min-height: 400px;
+  overflow-x: hidden; /* Ukryj poziomy scroll */
+}
+
+/* Excel section - flexible width */
+.workflow-excel {
+  flex: 1 1 0%;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* PDF Checker section - flexible width */
+.workflow-pdf-checker {
+  flex: 1 1 0%;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* PDF Copy section - flexible width */
+.workflow-pdf-copy {
+  flex: 1 1 0%;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Final File Name Generator - flexible width */
+.workflow-full-width {
+  flex: 1 1 0%;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.workflow-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px; /* Zmniejsz padding z 20px na 16px */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid lightgray;
+}
+
+.section-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d2d2d;
+}
+
+.section-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.section-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-content--compact {
+  gap: 12px;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.default-paths-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.path-item {
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.path-item small {
+  font-size: 11px;
+  color: #004085;
+  line-height: 1.5;
+  display: block;
+}
+
+.path-item code {
+  display: block;
+  background: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #2d2d2d;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .workflow-panel {
+    gap: 10px; /* Zmniejsz odstępy na mniejszych ekranach */
+  }
+
+  .workflow-excel,
+  .workflow-pdf-checker,
+  .workflow-pdf-copy,
+  .workflow-full-width {
+    min-width: 200px; /* Jeszcze mniejsza minimalna szerokość */
+  }
+}
+
+@media (max-width: 1200px) {
+  .workflow-panel {
+    gap: 10px;
+  }
+
+  .workflow-excel,
+  .workflow-pdf-checker,
+  .workflow-pdf-copy,
+  .workflow-full-width {
+    flex: 1 1 calc(50% - 10px); /* 2 kolumny na tabletach */
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .workflow-panel {
+    flex-direction: column; /* Kolumna na telefonach */
+    gap: 15px;
+  }
+
+  .workflow-excel,
+  .workflow-pdf-checker,
+  .workflow-pdf-copy,
+  .workflow-full-width {
+    flex: 1;
+    min-width: 100%;
+  }
+
+  .workflow-section {
+    padding: 16px;
+  }
+
+  .section-header h3 {
+    font-size: 1rem;
+  }
+
+  .section-description {
+    font-size: 0.85rem;
+  }
+}
