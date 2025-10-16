@@ -24,9 +24,9 @@ export default function AppNew() {
     <div className="app-new">
       <header className="app-header">
         <div className="header-content">
-          <h1>📊 CPK Export Weryfikacja</h1>
+          <h1>📊 Starter v0.1</h1>
           <p className="subtitle">
-            Weryfikacja i automatyzacja eksportu zasobów multimedialnych
+            Weryfikacja dokumentacji i analiza dokumentów
           </p>
         </div>
         
@@ -79,9 +79,9 @@ export default function AppNew() {
 
       <footer className="app-footer">
         <div className="footer-content">
-          <span>CPK Export Weryfikacja v1.0.0</span>
+          <span>Starter Template v1.0.0</span>
           <span>•</span>
-          <span>UI Redesign v2</span>
+          <span>UI v1</span>
           {window.electronAPI && (
             <>
               <span>•</span>
