@@ -1,4 +1,4 @@
-# 🤖 Agents.md - Kluczowe informacje techniczne
+# 🏗️ Architecture - Technical Documentation
 
 ## Opis projektu
 
@@ -90,7 +90,58 @@ types.ts
 
 ## 🎯 Kluczowe funkcjonalności
 
-### 1. File System Access API
+### 1. IPC Communication (Electron)
+
+**Start Template** implementuje bezpieczną komunikację między procesami (IPC):
+
+```typescript
+// Renderer Process (React) → Preload → Main Process
+// src/components/ExcelFilePicker.tsx
+const handleFileSelect = async () => {
+  const result = await window.api.selectDirectory();
+  if (result.success) {
+    console.log('Selected:', result.path);
+  }
+};
+```
+
+```javascript
+// Preload Script - IPC Bridge
+// electron/preload.js
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('api', {
+  selectDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
+  scanFiles: (path) => ipcRenderer.invoke('files:scan', path),
+  parseExcel: (filePath) => ipcRenderer.invoke('excel:parse', filePath),
+});
+```
+
+```javascript
+// Main Process - IPC Handlers
+// electron/main.js
+const { ipcMain, dialog } = require('electron');
+
+ipcMain.handle('dialog:openDirectory', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  return result.filePaths[0];
+});
+
+ipcMain.handle('excel:parse', async (event, filePath) => {
+  return await excelService.parseFile(filePath);
+});
+```
+
+**Bezpieczeństwo IPC:**
+- ✅ `contextIsolation: true` - izolacja kontekstu
+- ✅ `nodeIntegration: false` - brak Node.js w renderer
+- ✅ Whitelist APIs przez `contextBridge`
+- ✅ Walidacja danych w main process
+
+### 2. File System Access API (Browser Mode)
+
 ```typescript
 // Wybór folderu
 const dir = await window.showDirectoryPicker();
@@ -105,7 +156,7 @@ const state = await dir.queryPermission({ mode: 'read' });
 const req = await dir.requestPermission({ mode: 'read' });
 ```
 
-### 2. IndexedDB Storage
+### 3. IndexedDB Storage
 ```typescript
 import { get, set, del } from 'idb-keyval';
 
@@ -116,7 +167,7 @@ await set('root-dir-handle', handle);
 const handle = await get('root-dir-handle');
 ```
 
-### 3. Rekurencyjne skanowanie
+### 4. Rekurencyjne skanowanie
 ```typescript
 async function walkDir(dir, relativePath, sink, recursive) {
   for await (const [name, handle] of dir.entries()) {
@@ -189,15 +240,27 @@ npm run preview
 
 ## 🔒 Bezpieczeństwo i uprawnienia
 
+### Electron Security
+- **contextIsolation: ON** - renderer nie ma dostępu do Node.js APIs
+- **nodeIntegration: OFF** - wyłączona integracja Node.js w renderer
+- **Preload Script** - jedyny pomost między renderer a main
+- **IPC Whitelist** - tylko określone funkcje są eksponowane
+
 ### File System Access API
 - Wymaga gestów użytkownika (kliknięcie przycisku)
 - Przeglądarka pokazuje natywny dialog wyboru
 - Handle'y są zapisywane w IndexedDB per-origin
 - Uprawnienia mogą być cofnięte przez użytkownika
 
+### Best Practices
+- ✅ Validate all IPC inputs in main process
+- ✅ Sanitize file paths before operations
+- ✅ Use CSP (Content Security Policy) headers
+- ✅ Keep Electron and dependencies updated
+
 ### Ograniczenia
-- Tylko przeglądarki desktop (Chrome/Edge)
-- Brak dostępu do plików systemowych
+- File System Access API: tylko przeglądarki desktop (Chrome/Edge)
+- Brak dostępu do plików systemowych bez uprawnień
 - Wymaga ponownego udzielenia uprawnień po restart
 
 ## 🐛 Znane problemy i rozwiązania

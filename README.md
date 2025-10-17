@@ -1,334 +1,458 @@
-# Start Template# Start Template
+# Start Template
+
+Electron + React + TypeScript starter focused on Excel/CSV processing. The template ships with a secure IPC layer, ready-to-use UI components, and production build tooling for Windows.
+
+**Quick links:** [Quick Start](#quick-start) · [Features](#features) · [Tech Stack](#tech-stack) · [Scripts](#scripts) · [Build & Distribution](#build--distribution) · [Documentation](#documentation)
+
+## Features
+- Dual-mode runtime: browser (File System Access API) and Electron desktop
+- Hardened three-layer IPC bridge (Renderer → Preload → Main)
+- Excel/CSV parsing and export powered by ExcelJS
+- Zustand state management with persistence helpers
+- Pre-configured linting, logging, and build pipelines (Vite, electron-builder)
+
+## Tech Stack
+- **Frontend:** React 19, TypeScript 5.8, Vite 7, Zustand, CSS3
+- **Desktop/Main:** Electron 33, Node.js 20/22, ExcelJS 4.4, Pino logger
+- **Tooling:** ESLint, electron-builder, TypeScript compiler
+
+## Prerequisites
+- Node.js **20.19+** or **22.12+**
+- npm **10+**
+- Windows x64 (primary target, dev also works on macOS/Linux)
+
+## Quick Start
+1. Clone the template
+  ```bash
+  git clone https://github.com/Marcin-LWB/strt-Template-Elektron.git my-app
+  cd my-app
+  ```
+2. Install dependencies
+  ```bash
+  npm install
+  ```
+3. Start dev mode (Vite + Electron with HMR)
+  ```bash
+  npm start
+  ```
+  Alternative workflows:
+  - `npm run dev` – browser-only mode (fast reload, File System Access API)
+  - `npm run electron:dev` – Electron only (assumes Vite already running)
 
+## Scripts
 
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Vite dev server (`http://localhost:5173`) |
+| `npm run electron:dev` | Electron in dev mode (expects Vite dev server) |
+| `npm start` | Combined Vite + Electron dev workflow |
+| `npm run build` | Production build of the renderer (outputs `dist/`) |
+| `npm run build-electron` / `npm run dist` | Build renderer + Electron installer & portable exe |
+| `npm run dist:portable` | Portable Windows build only |
+| `npm run dist:dir` | Unpacked Electron build for inspection |
+| `npm run electron` | Launch Electron against the production build |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview production renderer build |
 
-**Wersja:** v1.0.0 | **Typ:** Szablon Electron | **Data:** 2025-10-16**Wersja:** v1.0.0 | **Typ:** Szablon ---
+## Project Structure
+```
+timeCheck/
+├── src/                  # React components, Zustand store, utils, types
+├── electron/             # Electron main process, preload bridge, services
+├── dist/                 # Renderer production build (npm run build)
+├── dist-electron/        # Electron artifacts (npm run build-electron)
+├── package.json          # npm scripts and electron-builder config
+└── vite.config.ts        # Vite configuration
+```
 
+## Build & Distribution
+- `npm run build-electron` (alias: `npm run dist`) produces:
+  - `Start Template Setup 1.0.0.exe` – Windows installer (NSIS)
+  - `Start Template-1.0.0-portable.exe` – portable executable
+- `npm run dist:portable` builds only the portable binary.
+- `npm run dist:dir` outputs an unpacked directory for debugging.
+- Troubleshooting build issues:
+  ```bash
+  npm run clean
+  npm install
+  npm run build-electron
+  ```
+  See [`BUILD.md`](./BUILD.md) for full packaging details and configuration tweaks (icons, targets, etc.).
 
+## Documentation
+- [`QUICKSTART.md`](./QUICKSTART.md) – step-by-step onboarding
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) – renderer/main architecture overview
+- [`BUILD.md`](./BUILD.md) – extended build & distribution guide
+- [`agents.md`](./agents.md) – IPC contracts and rules for automation/AI agents
+- [`FAQ.md`](./FAQ.md) – troubleshooting reference
 
-Szablon aplikacji desktopowej (Electron + React + TypeScript) z podstawową funkcjonalnością przetwarzania plików Excel.## 🎯 Cel szablonu
+## Notes for AI Agents
+Automation agents should read [`agents.md`](./agents.md) before contributing. It captures IPC contracts, security requirements, and the Definition of Done for new channels and features.
 
+## Maintainer
+- Author: Marcin Ostrowski · [GitHub](https://github.com/Marcin-LWB/strt-Template-Elektron)
+- Repository: `strt-Template-Elektron`
+- Last updated: October 17, 2025
+# Start Template# 🏗️ Build Instructions - Start Template
 
 
-**Status:** ✅ Szablon gotowy do użycia**Start Template** to gotowy do użycia szablon aplikacji Electron z React, który zapewnia:
 
+<div align="center">## Dostępne Wersje
 
 
----- 🚀 **Szybki start** – kompletna konfiguracja Electron + React + TypeScript
 
-- 📊 **Excel processing** – podstawowa obsługa plików Excel (wybór, ładowanie, wyświetlanie)
+**Profesjonalny szablon aplikacji desktopowej Electron + React + TypeScript**### 1. **Wersja Portable** 🚀
 
-## 🚀 Szybki start- 🏗️ **Modułowa struktura** – łatwe rozszerzanie o nowe funkcjonalności
+- **Plik**: `Start Template-1.0.0-portable.exe` (83.29 MB)
 
-- 🎨 **UI Components** – gotowe komponenty interfejsu użytkownika
+[Quick Start](#-quick-start) • [Dokumentacja](#-dokumentacja) • [Features](#-features) • [Stack](#-tech-stack)- **Cechy**:
 
-```bash- ⚙️ **Development tools** – ESLint, TypeScript, Vite dev server | **Data:** 2025-10-16
+  - Bez instalacji
 
-# Instalacja zależności
+</div>  - Można uruchomić z dowolnego miejsca (pendrive, folder)
 
-npm installSzablon aplikacji desktopowej (Electron + React + TypeScript) z podstawową funkcjonalnością przetwarzania plików Excel.
+  - Wszystko zawarte w jednym pliku
 
+---  - Idealnie do testowania i dystrybucji
 
 
-# Uruchomienie w trybie developerskim (Browser)**Status:** ✅ Szablon gotowy do użycia
 
-npm run dev
+## 🎯 Co to jest Start Template?### 2. **Wersja Installer (NSIS)** 📦
 
----
+- **Plik**: `Start Template Setup 1.0.0.exe` (83.51 MB)
 
-# Uruchomienie w trybie Electron
+**Start Template** to w pełni skonfigurowany, gotowy do użycia szablon aplikacji desktopowej łączący:- **Cechy**:
 
-npm run electron:dev## 🚀 Szybki start
+  - Klasyczny instalator Windows
 
+- 🖥️ **Electron 33** - framework dla aplikacji desktop  - Skrót na pulpicie i w Start Menu
 
+- ⚛️ **React 19** - nowoczesny UI z komponentami funkcyjnymi    - Uninstaller
 
-# Build produkcyjny```bash
+- 📘 **TypeScript 5.8** - bezpieczeństwo typów i IntelliSense  - Rejestracja w Windows Add/Remove Programs
 
-npm run build# Instalacja zależności
+- ⚡ **Vite 7** - błyskawiczny dev server i optimized build  - Profesjonalna dystrybucja
 
-```npm install
+- 🗂️ **Zustand** - eleganckie zarządzanie stanem
 
+- 📊 **ExcelJS** - wbudowana obsługa plików Excel/CSV## Budowanie Aplikacji
 
 
-**Otwórz aplikację:** http://localhost:5173# Uruchomienie w trybie developerskim (Browser)
 
-npm run dev
+### 💡 Dla kogo?### Wymagania
 
----
+- Node.js 20.19+ lub 22.12+
 
-# Uruchomienie w trybie Electron
+- ✅ Developerzy startujący nowy projekt Electron- npm 10+
 
-## ✨ Funkcjonalności szablonunpm run electron:dev
+- ✅ Teams potrzebujący solidnej podstawy aplikacji desktop
 
+- ✅ Projekty wymagające obsługi plików Excel### Kroki
 
+- ✅ Aplikacje wykorzystujące File System Access API
 
-### 🏗️ Architektura aplikacji# Build produkcyjny
+#### 1. Zainstaluj zależności
 
-- **Electron 33** - framework aplikacji desktopowejnpm run build
+---```bash
 
-- **React 19** - interfejs użytkownika z komponentami funkcyjnymi```
+npm install
 
-- **TypeScript** - bezpieczność typów i lepsze DX
+## 🚀 Quick Start```
 
-- **Vite 7** - szybki build tool i dev server**Otwórz aplikację:** http://localhost:5173
 
-- **Zustand** - lekkie zarządzanie stanem
 
----
+### Wymagania#### 2. Wersja Development (z hot-reload)
 
-### 📊 Podstawowe komponenty
+```bash
 
-- **ExcelFilePicker** - wybór i skanowanie plików Excel## ✨ Funkcjonalności szablonu
+- **Node.js** 20.19+ lub 22.12+npm start
 
-- **ExcelDataTable** - wyświetlanie danych w tabeli
+- **npm** 10+# Uruchamia Vite na http://localhost:5173 i Electron jednocześnie
 
-- **WorkflowPanel** - 4-sekcyjny panel workflow### �️ Architektura aplikacji
+- **System** Windows / macOS / Linux```
 
-- **CollapsiblePanel** - zwijane panele UI- **Electron 33** - framework aplikacji desktopowej
 
-- **React 19** - interfejs użytkownika z komponentami funkcyjnymi
 
-### 🔧 Gotowe funkcjonalności- **TypeScript** - bezpieczność typów i lepsze DX
+### Instalacja w 30 sekund#### 3. Zbuduj obie wersje (Installer + Portable)
 
-- ✅ Wybór folderów i plików Excel (File System Access API + Electron)- **Vite 7** - szybki build tool i dev server
+```bash
 
-- ✅ Ładowanie i parsowanie plików .xlsx (ExcelJS)- **Zustand** - lekkie zarządzanie stanem
+```bashnpm run dist
 
-- ✅ Podstawowe wyświetlanie danych w tabeli
+# 1. Klonuj szablon# lub
 
-- ✅ Export danych do Excel### � Podstawowe komponenty
+git clone https://github.com/Marcin-LWB/strt-Template-Elektron.git my-appnpm run build-electron
 
-- ✅ Responsywny layout z trzema głównymi sekcjami- **ExcelFilePicker** - wybór i skanowanie plików Excel
+cd my-app```
 
-- ✅ Zarządzanie stanem przez Zustand- **ExcelDataTable** - wyświetlanie danych w tabeli
 
-- ✅ Typescript konfiguracja i linting- **WorkflowPanel** - 4-sekcyjny panel workflow
 
-- **CollapsiblePanel** - zwijane panele UI
+# 2. Zainstaluj zależności#### 4. Zbuduj tylko Portable
 
-### 📖 Dokumentacja
+npm install```bash
 
-- **[QUICKSTART.md](./QUICKSTART.md)** - Szybki start i instrukcje### 🔧 Gotowe funkcjonalności
+npm run dist:portable
 
-- **[agents.md](./agents.md)** - Dokumentacja techniczna dla developerów- ✅ Wybór folderów i plików Excel (File System Access API + Electron)
+# 3. Uruchom aplikację (Vite + Electron jednocześnie)```
 
-- ✅ Ładowanie i parsowanie plików .xlsx (ExcelJS)
+npm start
 
----- ✅ Podstawowe wyświetlanie danych w tabeli
+```#### 5. Zbuduj bez pakowania (dla testowania)
 
-- ✅ Export danych do Excel
+```bash
 
-## 🎯 Cel szablonu- ✅ Responsywny layout z trzema głównymi sekcjami
-
-- ✅ Zarządzanie stanem przez Zustand
-
-**Start Template** to gotowy do użycia szablon aplikacji Electron z React, który zapewnia:- ✅ Typescript konfiguracja i linting
-
-
-
-- 🚀 **Szybki start** – kompletna konfiguracja Electron + React + TypeScript### 📖 Dokumentacja
-
-- 📊 **Excel processing** – podstawowa obsługa plików Excel (wybór, ładowanie, wyświetlanie)- **[QUICKSTART.md](./QUICKSTART.md)** - Szybki start i instrukcje
-
-- 🏗️ **Modułowa struktura** – łatwe rozszerzanie o nowe funkcjonalności- **[agents.md](./agents.md)** - Dokumentacja techniczna dla developerów
-
-- 🎨 **UI Components** – gotowe komponenty interfejsu użytkownika
-
-- ⚙️ **Development tools** – ESLint, TypeScript, Vite dev server---
-
-
-
-## 📁 Struktura projektu## Misja i cele
-
-
-
-```- � **Weryfikacja danych** – konsolidacja i kontrola jakości danych z wielu arkuszy Excel.
-
-start-template/- 🧮 **Automatyzacja operacji** – kopiowanie, numerowanie i strukturyzowanie plików według reguł opisanych w Excelach.
-
-├── electron/                   # Proces główny Electron- 🎯 **Porównanie źródeł** – szybkie zestawienie zawartości Excel vs pliki w katalogach, z wizualnym wyróżnianiem różnic.
-
-│   ├── main.js                # Entry point Electron- 🧩 **Modułowość** – możliwość rozbudowy o kolejne narzędzia bez przebudowy rdzenia.
-
-│   ├── preload.js             # Preload script dla IPC
-
-│   └── services/              # Serwisy backendowe## Docelowe persony i scenariusze
-
-├── public/                    # Zasoby statyczne
-
-├── src/                       # Kod źródłowy React| Persona | Potrzeba | Najważniejsze ekrany |
-
-│   ├── components/            # Komponenty UI| --- | --- | --- |
-
-│   ├── store/                 # Zarządzanie stanem (Zustand)| Koordynator produkcji | Zidentyfikować brakujące nagrania/zdjęcia względem arkusza Excel | Panel plików, widok porównań | 
-
-│   ├── types/                 # Definicje TypeScript| Analityk danych | Zweryfikować poprawność struktury arkusza i przygotować dane do eksportu | Łączenie arkuszy, tabela wynikowa |
-
-│   └── utils/                 # Funkcje pomocnicze| Asystent techniczny | Szybko skopiować i ponumerować zasoby zgodnie z instrukcją | Moduł operacji na plikach |
-
-├── package.json               # Konfiguracja i zależności
-
-├── tsconfig.json              # Konfiguracja TypeScript## Modułowa architektura logiczna
-
-├── vite.config.ts             # Konfiguracja Vite
-
-└── eslint.config.js           # Konfiguracja lintera1. **Shell aplikacji (Electron + React)**  
-
-```  - startuje okno, ładuje bundlowany frontend, wystawia IPC dla operacji plikowych, zarządza aktualizacjami.
-
-2. **Workspace Manager**  
-
-## 🚀 Jak zacząć  - wskazuje folder roboczy, przechowuje ścieżki i metadane plików `xlsx`, pozwala zaznaczać pliki (checkboxy) i zapamiętuje wybór.
-
-3. **Excel Processing Service**  
-
-1. **Klonuj szablon:**  - odczyt arkuszy (SheetJS/ExcelJS), pobieranie nagłówków, łączenie pierwszych arkuszy, odwzorowanie kolorów z drugiej kolumny, eksport intermediate data.
-
-   ```bash4. **Verification Engine**  
-
-   git clone <url-szablonu> my-electron-app  - porównuje dane arkuszy z realnym stanem plików, generuje raport różnic, wspiera kolorowanie/zaznaczanie rekordów wymagających akcji.
-
-   cd my-electron-app5. **File Operations Service**  
-
-   ```  - kopiowanie i numerowanie plików, tworzenie struktury katalogów, walidacja ścieżek docelowych, obsługa konfliktów i log błędów.
-
-6. **Presentation / UI Layer**  
-
-2. **Zainstaluj zależności:**  - zarządzanie stanem (np. Zustand/Redux Toolkit), widoki tabelaryczne, panel statusów, logi operacji, moduł konfiguracyjny.
-
-   ```bash7. **Persistencja i konfiguracja**  
-
-   npm install  - ustawienia użytkownika, parametry (liczba analizowanych kolumn, mapowanie kolorów, reguły numeracji) w `appConfig.json` lub IndexedDB.
-
-   ```
-
-## Proponowana struktura katalogów
-
-3. **Uruchom w trybie developerskim:**
-
-   ```bash```
-
-   npm run dev          # Browser modecpk-export-weryfikacja/
-
-   npm run electron:dev # Electron mode├── apps/
-
-   ```│   ├── desktop-shell/          # Proces główny Electron + preload
-
-│   └── renderer/               # Aplikacja React (Vite)
-
-4. **Buduj i dostosowuj:**├── packages/
-
-   - Edytuj komponenty w `src/components/`│   ├── excel-engine/           # Logika odczytu i łączenia arkuszy
-
-   - Dodaj nowe funkcjonalności w `src/store/`│   ├── verification-core/      # Porównania, reguły, raporty
-
-   - Rozszerzaj typy w `src/types/`│   ├── file-automation/        # Operacje kopiowania, numerowania, tworzenia katalogów
-
-│   └── ui-toolkit/             # Reużywalne komponenty UI (tabela, statusy, kolorowanie)
-
-## 🔧 Dostępne komendy├── resources/                  # Szablony raportów, ikony, style globalne
-
-├── configs/
-
-```bash│   ├── app-config.schema.json  # Walidacja ustawień
-
-npm run dev              # Uruchom Vite dev server│   └── environments/           # Profile (dev, staging, production)
-
-npm run electron:dev     # Uruchom w trybie Electron├── scripts/                    # Automatyzacje (build, release, lint)
-
-npm run build            # Build produkcyjny└── docs/
-
-npm run preview          # Podgląd build'a   └── architecture.md         # Bieżące notatki techniczne
-
-npm run lint             # Uruchom ESLint```
+**🎉 Gotowe!** Aplikacja otworzy się automatycznie na `http://localhost:5173`npm run dist:dir
 
 ```
 
-> Startowo repo może wykorzystać istniejącą strukturę Vite/Electron, ale powyższy układ ułatwia późniejszy podział na pakiety oraz testowanie jednostkowe poza rendererem.
+### Alternatywne uruchomienie
+
+## Struktura Projektu
+
+```bash
+
+# Tylko przeglądarka (development)```
+
+npm run devtimeCheck/
+
+├── src/                      # Kod React (TypeScript)
+
+# Tylko Electron (po uruchomieniu dev)├── electron/                 # Kod Electron
+
+npm run electron:dev├── dist/                     # Build React (po npm run build)
+
+├── dist-electron/            # Binaria Electron (po npm run build-electron)
+
+# Build produkcyjny├── package.json              # Konfiguracja npm i electron-builder
+
+npm run build└── vite.config.ts           # Konfiguracja Vite
+
+```
+
+# Build Electron (Installer + Portable)
+
+npm run build-electron## Output Build
+
+```
+
+Wyniki buildów znajdują się w folderze `dist-electron/`:
 
 ---
 
-## Kluczowe przepływy użytkownika
+```
 
-**Start Template** - gotowy punkt startowy dla aplikacji Electron z React i TypeScript 🚀
-1. **Wybór plików źródłowych**
-  - użytkownik wybiera folder zawierający `xlsx`, aplikacja skanuje go i prezentuje listę z checkboxami.
-  - Workspace Manager zapamiętuje wybór oraz ostatnio użyte lokalizacje.
+## ✨ Featuresdist-electron/
 
-2. **Ładowanie i łączenie arkuszy**
-  - po kliknięciu „Załaduj” Excel Processing Service:
-    - otwiera pierwszy arkusz każdego wybranego pliku,
-    - odczytuje nagłówki z pierwszego wiersza,
-    - importuje konfigurację liczby kolumn (domyślnie 10, możliwość zmiany),
-    - mapuje kolory z drugiej kolumny (np. zapisuje jako `rowColor` w modelu danych),
-    - tworzy spójną tabelę wynikową przekazywaną do UI.
+├── Start Template-1.0.0-portable.exe      # ← Portable version
 
-3. **Weryfikacja plików vs Excel**
-  - Verification Engine zestawia rekordy z fizycznymi plikami:
-    - obsługa wielu lokalizacji źródłowych,
-    - raport braków/nadmiarów,
-    - sugestie zmian (np. brakujące pliki, błędne nazwy).
-  - Wyniki trafiają do UI z możliwością filtrowania i kolorowania.
+### 🏗️ Architektura├── Start Template Setup 1.0.0.exe         # ← Installer
 
-4. **Operacje automatyzujące**
-  - File Operations Service wykonuje kopiowanie i numerację zgodnie z regułami z arkusza,
-  - tworzy strukturę katalogów (np. sezon/odcinek/ujęcie),
-  - prowadzi log działań (pomyślne, ostrzeżenia, błędy).
+├── Start Template Setup 1.0.0.exe.blockmap
 
-5. **Kolorowanie/aktualizacja arkuszy**
-  - moduł Excel może zwrotnie aktualizować kolory w arkuszu (np. oznaczać poprawione rekordy),
-  - eksport zmian do osobnego pliku `xlsx` lub zapis bezpośredni.
+- ✅ **Dual-mode** - działa w przeglądarce i jako aplikacja desktop├── win-unpacked/                           # Rozpakowany build (do debugowania)
 
-## Warstwy techniczne i komunikacja
+- ✅ **IPC Communication** - bezpieczna komunikacja Renderer ↔ Main├── builder-effective-config.yaml
 
-- **IPC (Electron)** – jasne kanały `main ↔ preload ↔ renderer` z kontraktami TypeScript (np. tRPC, zod).
-- **Excel engine** – biblioteka (np. ExcelJS) pracująca w procesie głównym lub workerze Node (ze względu na potrzebę pełnych uprawnień do systemu plików).
-- **Przechowywanie konfiguracji** – pliki JSON + persisted store (Zustand/Redux) w rendererze.
-- **Logowanie** – centralny logger (np. Pino/Winston) z możliwością eksportu logów do CSV.
+- ✅ **Context Isolation** - pełne bezpieczeństwo Electron└── latest.yml                              # Plik aktualizacji
 
-## Parametryzacja i rozszerzalność
+- ✅ **Hot Module Replacement** - natychmiastowe zmiany w dev mode```
 
-- Liczba analizowanych kolumn (domyślnie 10) – przechowywana w ustawieniach, edytowalna z UI.
-- Mapowanie kolorów wierszy – konfiguracja per projekt (np. `zielony = gotowy`, `czerwony = brakuje pliku`).
-- Reguły numeracji i struktury katalogów – deklaratywne w formie szablonów (np. `${episode}_${scene}_${take}`).
-- Dodawanie nowych narzędzi – każdy moduł w packages/ może wystawić własny panel w UI (dynamiczny routing/registry modułów).
 
-## Roadmapa wdrożenia
 
-1. **Iteracja 0 – fundament**
-  - Przeniesienie istniejącego szablonu do układu Electron + React + TypeScript.
-  - Konfiguracja IPC, struktura folderów, setup loggera i store.
+### 📊 Excel Processing## Dystrybucja
 
-2. **Iteracja 1 – wybór i ładowanie plików**
-  - UI listy plików `xlsx` z checkboxami.
-  - Implementacja „Załaduj” z odczytem pierwszego arkusza i budową tabeli.
 
-3. **Iteracja 2 – prezentacja danych**
-  - Widok tabelaryczny (kolumny dynamiczne, kolory wierszy), filtry, zapis presetów.
 
-4. **Iteracja 3 – weryfikacja i raporty**
-  - Mechanizmy porównawcze, generacja różnic, eksport raportów.
+- ✅ Wybór folderów i plików (File System Access API + Electron dialog)### Opcja 1: Portable (Rekomendowane dla prostoty)
 
-5. **Iteracja 4 – operacje na plikach**
-  - Kopiowanie, numerowanie, tworzenie struktury katalogów, obsługa błędów.
+- ✅ Parsowanie `.xlsx` i `.csv` (ExcelJS)- Po prostu skopiuj `Start Template-1.0.0-portable.exe`
 
-6. **Iteracja 5 – ergonomia i automatyzacja**
-  - Konfiguracja projektów, kolorowanie w Excelu, integracje dodatkowe.
+- ✅ Dynamiczna tabela z kolumnami z arkusza- Użytkownik uruchamia plik - gotowe!
 
-## Testowanie i jakość
+- ✅ Export danych do Excel- Brak zmian w rejestrze Windows
 
-- **Testy jednostkowe** dla pakietów `excel-engine`, `verification-core`, `file-automation` (np. Vitest/Jest).
-- **Testy integracyjne** procesów plikowych w środowisku Node (mock systemu plików).
-- **Testy E2E** renderer + Electron (np. Playwright) dla krytycznych przepływów (wybór plików, generacja raportu).
-- **Walidacja danych** – schematy z Zod/TypeBox dla rekordów wczytanych z Excela.
+- ✅ Rekurencyjne skanowanie katalogów
 
-## Wizja dalszego rozwoju
+### Opcja 2: Installer (Profesjonalne)
 
-- Integracja z chmurą (S3/SharePoint) jako alternatywne źródło plików.
-- Harmonogramy zadań (watcher zmian na dysku + auto-raport).
-- Moduł plug-inów: pozwalać organizacjom dostarczać własne reguły weryfikacji.
-- Telemetria i monitorowanie błędów (Sentry) z poszanowaniem prywatności.
+### 🎨 UI Components- Po prostu skopiuj `Start Template Setup 1.0.0.exe`
+
+- Użytkownik klika -> Instaluje -> Skróty na pulpicie
+
+| Komponent | Opis |
+
+|-----------|------|## Troubleshooting
+
+| `ExcelFilePicker` | Wybór i skanowanie plików Excel/CSV |
+
+| `ExcelDataTable` | Wyświetlanie i edycja danych tabelarycznych |### Build nie działa?
+
+| `WorkflowPanel` | 4-sekcyjny panel workflow (gotowy do rozbudowy) |```bash
+
+| `CollapsiblePanel` | Zwijane sekcje UI |npm run clean  # Oczyść cache
+
+npm install     # Reinstaluj zależności
+
+### 🔧 Developer Experiencenpm run build-electron
+
+```
+
+- ✅ **TypeScript** - pełne typowanie w całym projekcie
+
+- ✅ **ESLint** - automatyczne linting kodu### Port 5173 zajęty w dev?
+
+- ✅ **Zustand** - prosty i wydajny state managementVite automatycznie użyje innego portu (5174, 5175, itd.)
+
+- ✅ **IndexedDB** - persistence przez `idb-keyval`
+
+- ✅ **Pino Logger** - strukturalne logowanie (dev mode)### Electron nie startuje?
+
+```bash
+
+---npm run electron      # Uruchom Electron bezpośrednio
+
+# Sprawdź console dla error messages
+
+## 📖 Dokumentacja```
+
+
+
+| Dokument | Opis |## Konfiguracja Buildów
+
+|----------|------|
+
+| **[QUICKSTART.md](./QUICKSTART.md)** | Szczegółowy przewodnik dla początkujących |### Edycja electron-builder config
+
+| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Architektura techniczna i wzorce |
+
+| **[BUILD.md](./BUILD.md)** | Instrukcje buildowania i dystrybucji |Znajduje się w `package.json` w sekcji `"build"`:
+
+| **[agents.md](./agents.md)** | 🤖 Specyfikacja techniczna dla AI agentów |
+
+| **[FAQ.md](./FAQ.md)** | Często zadawane pytania i troubleshooting |```json
+
+{
+
+---  "build": {
+
+    "appId": "com.starttemplate.app",
+
+## 🔧 Dostępne komendy    "productName": "Start Template",
+
+    "win": {
+
+```bash      "target": ["nsis", "portable"]  // Dostępne: nsis, portable, msi, appx
+
+# Development    }
+
+npm run dev              # Vite dev server (http://localhost:5173)  }
+
+npm run electron:dev     # Uruchom Electron w trybie dev}
+
+npm start                # Vite + Electron jednocześnie (rekomendowane)```
+
+
+
+# Build### Dodanie ikony
+
+npm run build            # Build React do dist/
+
+npm run build-electron   # Build Electron (Installer + Portable)Dodaj plik ikony:
+
+npm run dist             # Alias dla build-electron1. Utwórz `build/icon.ico` (256x256 px)
+
+npm run dist:portable    # Tylko portable .exe2. W `package.json` zmień na:
+
+npm run dist:dir         # Build bez pakowania (debug)```json
+
+"win": {
+
+# Quality  "icon": "build/icon.ico"
+
+npm run lint             # ESLint check}
+
+npm run preview          # Preview production build```
+
+```
+
+## Skrypty NPM
 
 ---
 
-> Niniejszy dokument stanowi umowny blueprint projektu „CPK-Export-Weryfikacja”. Na jego podstawie można rozpocząć implementację modułami, iteracyjnie rozwijając aplikację w kontrolowany sposób.
+| Skrypt | Opis |
+
+## 🛠️ Tech Stack|--------|------|
+
+| `npm run dev` | Vite dev server (http://localhost:5173) |
+
+**Frontend:** React 19 • TypeScript 5.8 • Vite 7 • Zustand • CSS3| `npm run build` | Build React do `dist/` |
+
+| `npm run build-electron` | Build React + Electron (obie wersje) |
+
+**Backend:** Electron 33 • Node.js • ExcelJS 4.4 • Pino Logger| `npm run dist` | Alias dla `build-electron` |
+
+| `npm run dist:portable` | Build tylko wersji portable |
+
+**DevTools:** ESLint • electron-builder • TypeScript Compiler| `npm run dist:dir` | Build bez pakowaniu (do testów) |
+
+| `npm run electron` | Uruchom Electron z dist/ |
+
+---| `npm run electron:dev` | Uruchom Electron w development mode |
+
+| `npm start` | Vite + Electron dev (rekomendowane) |
+
+## 🚀 Jak zacząć?| `npm run lint` | ESLint sprawdzenie kodu |
+
+| `npm run preview` | Podgląd production buildu |
+
+1. **Czytaj README.md** - Overview projektu (ten plik)
+
+2. **Uruchom QUICKSTART.md** - Szczegółowy poradnik## Informacje o Aplikacji
+
+3. **Sprawdź ARCHITECTURE.md** - Zrozumienie architektury
+
+4. **Przeczytaj agents.md** - Dla AI agentów pracujących nad projektem- **Nazwa**: Start Template
+
+5. **Zajrzyj do FAQ.md** - Gdy masz pytania- **Wersja**: 1.0.0
+
+- **Tech Stack**: Electron 33 + React 19 + TypeScript + Vite
+
+---- **Rozmiar**: ~83 MB (zawiera ExcelJS)
+
+- **Supportowane**: Windows x64
+
+## 📦 Dystrybucja
+
+## Notatki
+
+Po `npm run build-electron`:
+
+- **Installer** - `Start Template Setup 1.0.0.exe` (~83 MB)- ExcelJS (940 kB) jest duża - jeśli chcesz zmniejszyć rozmiar, rozważ webpack code-splitting
+
+- **Portable** - `Start Template-1.0.0-portable.exe` (~83 MB)- Electron zawiera Chromium - stąd duży rozmiar
+
+- Portable i Installer to ten sam kod - różni się sposób dostarczania
+
+---- Oba buildują się jednocześnie dla oszczędności czasu
+
+
+
+## 🤝 Contributing---
+
+
+
+Sugestie, PRy i feedback mile widziane!**Ostatnia aktualizacja**: 2025-10-16  
+
+**Twórca**: Marcin Ostrowski  
+
+---**Repozytorium**: strt-Template-Elektron
+
+
+<div align="center">
+
+Made with ❤️ by Marcin Ostrowski  
+[GitHub](https://github.com/Marcin-LWB/strt-Template-Elektron) • [Docs](./QUICKSTART.md)
+
+Last update: October 17, 2025
+
+</div>

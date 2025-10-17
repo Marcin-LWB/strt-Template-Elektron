@@ -35,15 +35,25 @@ npm install
 
 ### Tryb Development (Rekomendowany)
 
-**Opcja 1: Automatyczny start (Vite + Electron)**
+**Opcja 1: Automatyczny start (Vite + Electron) - NAJLEPSZY!** ⭐
 ```bash
 npm start
 ```
-To uruchomi:
+To uruchomi **jednocześnie**:
 - Vite dev server na `http://localhost:5173`
-- Electron app (czeka na Vite)
+- Electron app (automatycznie czeka na Vite)
+- Hot Module Replacement (HMR) dla natychmiastowych zmian
 
-**Opcja 2: Ręczny start (2 terminale)**
+**Opcja 2: Tylko przeglądarka (Browser Mode)**
+```bash
+npm run dev
+```
+Testuj funkcjonalności w przeglądarce bez Electron:
+- Szybsze reloadowanie
+- DevTools przeglądarki
+- File System Access API (Chrome/Edge)
+
+**Opcja 3: Tylko Electron (po uruchomieniu Vite)**
 
 Terminal 1 - Vite:
 ```bash
@@ -54,6 +64,19 @@ Terminal 2 - Electron (po starcie Vite):
 ```bash
 npm run electron:dev
 ```
+
+### 🔄 Browser Mode vs Electron Mode
+
+| Feature | Browser Mode | Electron Mode |
+|---------|--------------|---------------|
+| File System Access | File System Access API | Native Node.js fs |
+| Szybkość dev | ⚡ Bardzo szybka | 🔥 Szybka |
+| DevTools | Chrome DevTools | Electron DevTools |
+| Auto-reload | HMR | Restart required |
+| Testowanie | Szybkie iteracje | Pełna funkcjonalność |
+| IPC Channels | ❌ Niedostępne | ✅ Pełny dostęp |
+
+**💡 Wskazówka:** Rozwijaj w Browser Mode, testuj w Electron Mode!
 
 ### Tryb Production
 
@@ -88,8 +111,9 @@ Instalator będzie w folderze `dist-electron/`
 
 3. **Uruchom w development:**
    ```bash
-   npm run dev      # Browser mode
-   npm run electron:dev  # Electron mode
+   npm start         # Vite + Electron (rekomendowane)
+   npm run dev       # Tylko browser mode
+   npm run electron:dev  # Tylko Electron mode (po npm run dev)
    ```
 
 ### 2. Podstawowe komponenty
@@ -99,7 +123,17 @@ Instalator będzie w folderze `dist-electron/`
 - **WorkflowPanel** - panel z 4 sekcjami (Excel + 3 szablony)
 - **CollapsiblePanel** - zwijane sekcje interfejsu
 
-### 3. Rozszerzanie szablonu
+### 3. Dokumentacja projektu
+
+| Dokument | Co znajdziesz |
+|----------|---------------|
+| **[README.md](./README.md)** | Overview projektu, quick start, roadmap |
+| **[QUICKSTART.md](./QUICKSTART.md)** | Szczegółowa instrukcja dla początkujących (ten plik) |
+| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Architektura techniczna, API patterns |
+| **[IPC-GUIDE.md](./IPC-GUIDE.md)** | Przewodnik komunikacji Electron IPC |
+| **[BUILD.md](./BUILD.md)** | Instrukcje buildowania i dystrybucji |
+
+### 4. Rozszerzanie szablonu
 
 #### Dodawanie nowych komponentów:
 ```typescript
@@ -227,21 +261,61 @@ npm run lint             # Run ESLint
 ## 🐛 Troubleshooting
 
 ### Electron nie startuje
+
 ```bash
 # Sprawdź czy Vite działa
 npm run dev
-# Potem uruchom Electron
+# Poczekaj na "ready in X ms"
+# Potem w drugim terminalu:
 npm run electron:dev
 ```
 
+**Lub użyj `npm start` - automatycznie czeka na Vite!**
+
+### Port 5173 zajęty
+
+Vite automatycznie znajdzie wolny port (5174, 5175, itd.)  
+Sprawdź output w terminalu i zaktualizuj URL w `electron/main.js` jeśli używasz `electron:dev` ręcznie.
+
 ### Błędy TypeScript
+
 ```bash
 # Sprawdź typy
 npx tsc --noEmit
+
+# Jeśli błąd "Cannot find module"
+npm install
 ```
 
-### Problemy z Excel
-Sprawdź konsolę deweloperską (`Ctrl+Shift+I` w Electron) dla błędów.
+### Problemy z Excel/File System Access API
+
+**Browser Mode:**
+- File System Access API działa tylko w Chrome/Edge
+- Wymaga HTTPS (localhost jest wyjątkiem)
+- Sprawdź console (`F12`) dla błędów uprawnień
+
+**Electron Mode:**
+- Sprawdź konsolę deweloperską (`Ctrl+Shift+I`)
+- Upewnij się że IPC channels są zarejestrowane w `electron/main.js`
+- Sprawdź logi w `electron/utils/logger.js`
+
+### "Module not found" w runtime
+
+```bash
+# Pełna reinstalacja
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Build fails
+
+```bash
+# Wyczyść cache
+npm run build -- --clean
+# Lub ręcznie:
+rm -rf dist dist-electron
+npm run build
+```
 
 ---
 
